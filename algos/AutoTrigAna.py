@@ -1,6 +1,7 @@
 
 from Centella.AAlgo import AAlgo
 from Centella.physical_constants import *
+from Centella.system_of_units import *
 from Utils import *
 
 class AutoTrigAna(AAlgo):
@@ -50,7 +51,7 @@ class AutoTrigAna(AAlgo):
             self.chids = [i for i,s in sensors][:self.npmt]
             self.pos = [s.GetPosition() for i,s in sensors][:self.npmt]
             self.m.log(0,"PMT Channels in run:",self.chids)
-            self.time = event.GetTime()
+            self.time = event.GetTime()*millisecond/second
             
         signals = getGoodSignals(event,self.recoLabel)
         S1s = [s for s in signals if s.GetSignalType()==gate.S1]
