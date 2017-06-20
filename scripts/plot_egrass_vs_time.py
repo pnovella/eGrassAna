@@ -5,7 +5,7 @@ import time
 
 hman = HistoManager(True)
 
-runs = [4194,4210,4265,4282,4308,4333,4345] 
+runs = [4115,4170,4194,4210,4265,4282,4308,4333,4345,4348] 
 for run in runs: hman.load("../data/AutoTrigAna_%i.root"%run,"%i_"%run)
 
 
@@ -37,6 +37,7 @@ hman["Axis_graphAxis"].GetXaxis().SetTimeDisplay(1);
 hman.axis("Axis_graphAxis","Time","e^{-} grass rate (ms^{-1})")
 hman.setTitle("Axis_graphAxis","Auto-trigger Runs")
 hman.style1d()
+hman.setGrid(1,1)
 hman.draw("Axis_graphAxis",max=40,min=70)
 for run in runs: hman.drawGraph("%i_S1Rate"%run,"P",markerType=20)
 
