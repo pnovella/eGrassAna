@@ -5,7 +5,8 @@ import time
 
 hman = HistoManager(True)
 
-runs = [4213,4218,4219,4220,4221,4222,4223] 
+#runs = [4212,4213,4218,4219,4220,4221,4222,4223,4224]
+runs = [4015,4016,4020]#,4212,4224] 
 for run in runs: hman.load("../data/AutoTrigAna_%i.root"%run,"%i_"%run)
 
 
@@ -20,25 +21,15 @@ for run in runs:
     rates.append(rate)
     erates.append(erate)
 
-hman.graph("myrate",[-0.5]+times,[0]+rates,0,[0]+erates)
-hman.axis("myrate_graphAxis","Time (min)","e^{-} grass rate (ms^{-1})")
+#hman.graph("myrate",[-0.5]+times,[0]+rates,0,[0]+erates)
+hman.graph("myrate",runs,rates,0,erates)
+hman.axis("myrate_graphAxis","Run Number","e^{-} grass rate (ms^{-1})")
 hman.setTitle("myrate_graphAxis","Auto-trigger Runs")
 hman.style1d()
-hman.drawGraph("myrate","AP",markerType=20,min=30,max=40)
-
-raw_input()
-
-time1,time2,rate = Double(),Double(),Double()
-hman["%s_S1Rate"%runs[0]].GetPoint(0,time1,rate)
-hman["%s_S1Rate"%runs[-1]].GetPoint(0,time2,rate)
-hman.graph("Axis",[time1,time2],[0,0],0,0)
-hman["Axis_graphAxis"].GetXaxis().SetTimeDisplay(1);
-hman["Axis_graphAxis"].GetXaxis().SetTimeFormat("%H:%M");
-hman.axis("Axis_graphAxis","Time","e^{-} grass rate (ms^{-1})")
-hman.setTitle("Axis_graphAxis","Auto-trigger Runs")
-hman.style1d()
-hman.draw("Axis_graphAxis",max=40,min=30)
-for run in runs: hman.drawGraph("%i_S1Rate"%run,"P",markerType=20)
+hman.setGrid(1,1)
+hman.drawGraph("myrate","AP",markerType=20,min=30,max=60)
+hman.addText(4015.5,52,"HV On",color="red",size=0.03,rotate=0)
+hman.addText(4019,38,"Gate HV Off",color="blue",size=0.03,rotate=0)
 
 raw_input()
 
@@ -81,9 +72,9 @@ for ch,i in zip(pmts[1:],range(len(pmts[1:]))):
     
 raw_input()
 
-hman.setCanvasSize(800,500)
-hman.zones(3,2)
-for run in runs[1:]:
+hman.setCanvasSize(900,500)
+hman.zones(3,1)
+for run in runs:
     hname = "%i_S1XYRate"%run
     hman.setTitle(hname,"Run %i"%run)
     hman.axis(hname,"x (cm)","y (cm)","Rate (ms^{-1})")
