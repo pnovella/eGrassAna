@@ -38,13 +38,17 @@ class AutoTrigAna(AAlgo):
         self.m.log(1,'+++Init method of AutoTrigAna algorithm+++')
 
         self.bookHistos()
-
+        self.nAnaTrig = 0
+        
         return
 
     def execute(self,event=""):
 
         """ 
         """
+
+        self.nAnaTrig += 1 
+        
         if not self.chids: 
 
             sensors = self.run.GetGeometry().GetSensors()
@@ -59,7 +63,7 @@ class AutoTrigAna(AAlgo):
         
         self.hman.fill("nS1trig",len(S1s))
         self.hman.fill("nS2trig",len(S2s))
-
+        
         S1sCh = S2sCh = [0]*len(self.chids)
         for S1 in S1s:
             chIDs = list(S1.GetCatHitMap().GetChannels(0))# RecoSignal!
@@ -86,7 +90,7 @@ class AutoTrigAna(AAlgo):
 
     def computeRates(self):
         
-        totaltime = self.rowindow*(self.n_evt+1)/millisecond
+        totaltime = self.rowindow*(self.nAnaTrig)/millisecond
         
         conts = self.hman.getContents("nS1trig")
         bins =  self.hman.getLowEdges("nS1trig")
