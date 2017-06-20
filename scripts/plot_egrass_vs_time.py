@@ -5,41 +5,25 @@ import time
 
 hman = HistoManager(True)
 
-runs = [4115,4170,4194,4210,4265,4282,4308,4333,4345,4348] 
+runs = [4057,4063,4075,4115,4126,4170,4194,4210,4265,4282,4308,4333,4345,4348] 
 for run in runs: hman.load("../data/AutoTrigAna_%i.root"%run,"%i_"%run)
 
-
-time0,rate = Double(),Double()
-hman["%s_S1Rate"%runs[0]].GetPoint(0,time0,rate)
 times,rates,erates = [],[],[]
 for run in runs:
     rtime,rate = Double(),Double()
     hman["%s_S1Rate"%run].GetPoint(0,rtime,rate)
     erate = hman["%s_S1Rate"%run].GetErrorY(0)
-    times.append((rtime-time0)/60)
+    times.append(rtime)
     rates.append(rate)
     erates.append(erate)
 
-# hman.graph("myrate",[-0.5]+times,[0]+rates,0,[0]+erates)
-# hman.axis("myrate_graphAxis","Time (min)","e^{-} grass rate (ms^{-1})")
-# hman.setTitle("myrate_graphAxis","Auto-trigger Runs")
-# hman.style1d()
-# hman.drawGraph("myrate","AP",markerType=20,min=30,max=60)
-
-#raw_input()
-
-time1,time2,rate = Double(),Double(),Double()
-hman["%s_S1Rate"%runs[0]].GetPoint(0,time1,rate)
-hman["%s_S1Rate"%runs[-1]].GetPoint(0,time2,rate)
-hman.graph("Axis",[time1,time2],[0,0],0,0)
-hman["Axis_graphAxis"].GetXaxis().SetTimeDisplay(1);
-#hman["Axis_graphAxis"].GetXaxis().SetTimeFormat("%H:%M");
-hman.axis("Axis_graphAxis","Time","e^{-} grass rate (ms^{-1})")
-hman.setTitle("Axis_graphAxis","Auto-trigger Runs")
+hman.graph("myrate",times,rates,0,erates)
+hman.axis("myrate_graphAxis","Date","e^{-} grass rate (ms^{-1})")
+hman.setTitle("myrate_graphAxis","Auto-trigger Runs")
+hman["myrate_graphAxis"].GetXaxis().SetTimeDisplay(1);
 hman.style1d()
 hman.setGrid(1,1)
-hman.draw("Axis_graphAxis",max=40,min=70)
-for run in runs: hman.drawGraph("%i_S1Rate"%run,"P",markerType=20)
+hman.drawGraph("myrate","APL",lineType=2,markerType=20)
 
 raw_input()
 
@@ -63,10 +47,10 @@ pmterates = [ [ erates[i] for erates in runerates ] for i in range(len(pmts))]
 
 for pmt,rates,erates in zip(pmts,pmtrates,pmterates):
     gr = "pmtrate_ch%i"%int(pmt)
-    hman.graph(gr,[-0.5]+times,[0]+rates,0,[0]+erates)
-    hman.axis(gr+"_graphAxis","Time (min)","e^{-} grass rate (ms^{-1})")
+    hman.graph(gr,times,rates,0,erates)
+    hman[gr+"_graphAxis"].GetXaxis().SetTimeDisplay(1);
+    hman.axis(gr+"_graphAxis","Date","e^{-} grass rate (ms^{-1})")
     hman.setTitle(gr+"_graphAxis","Channel %i Rate"%int(pmt))
-    
     
 hman.style1d()
     
