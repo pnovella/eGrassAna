@@ -160,7 +160,7 @@ class AutoTrigAna(AAlgo):
     def bookHistos(self):
 
         self.hman.h1("nS1trig","S1-like signals; Number of signals; Entries",
-                     2000,0,2000)
+                     10000,0,10000)
         self.hman.h1("nS2trig","S2-like signals; Number of signals; Entries",
                      100,0,100)
 
@@ -170,13 +170,13 @@ class AutoTrigAna(AAlgo):
         for ch in range(self.npmt):
             hname = "nS1trigCh%i"%ch
             title = "S1-like signals Ch%i; Number of signals; Entries"%ch
-            self.hman.h1(hname,title,2000,0,2000)
+            self.hman.h1(hname,title,10000,0,10000)
             hname = "nS2trigCh%i"%ch
             title = "S2-like signals Ch%i; Number of signals; Entries"%ch
             self.hman.h1(hname,title,100,0,100)
             
         hname = "S1XYRate"
-        self.hman.h2(hname,"S1 e- grass rate; x (cm); y (cm)",
+        self.hman.h2(hname,"S1 e- grass rate; x (cm); y (cm); Rate (ms^{-1})",
                      10,-200,200,10,-200,200)
 
         #hname = "S1XYNP"
