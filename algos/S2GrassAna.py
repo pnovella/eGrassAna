@@ -40,7 +40,7 @@ class S2GrassAna(AAlgo):
         if self.recoLabel: self.unit = nanosecond # !!!!
         else: self.unit = microsecond
 
-        
+   
     def initialize(self):
 
         """        
@@ -48,9 +48,11 @@ class S2GrassAna(AAlgo):
         
         self.m.log(1,'+++Init method of S2GrassAna algorithm+++')
 
-        self.bookHistos()
-
         self.nAnaTrig = 0
+        self.chids = []
+        self.npmt = 11 # !!!!
+
+        self.bookHistos()
         
         return
 
@@ -58,7 +60,15 @@ class S2GrassAna(AAlgo):
 
         """
         """
+    
+        if not self.chids: 
 
+            sensors = self.run.GetGeometry().GetSensors()
+            self.chids = [i for i,s in sensors][:self.npmt]
+            self.pos = [s.GetPosition() for i,s in sensors][:self.npmt]
+            self.m.log(0,"PMT Channels in run:",self.chids)
+            self.time = event.GetTime()*millisecond/second
+        
         self.nAnaTrig += 1
         
         signals = getGoodSignals(event,self.recoLabel)
@@ -74,6 +84,7 @@ class S2GrassAna(AAlgo):
 
         self.hman.fill("S2Charge",s2q)
         self.hman.fill("S2sTime",s2time/microsecond)
+        for s1 in S1s: self.hman.fill("S1sTime",s1.GetStartTime()/microsecond)
         
         S1sAS2 =[s1 for s1 in S1s if s1.GetStartTime()>self.s2EGTmin]
         S1sPB =[s1 for s1 in S1s if s1.GetStartTime()<self.cntEGTmax]
@@ -81,9 +92,25 @@ class S2GrassAna(AAlgo):
         self.hman.fill("nS1sPB",len(S1sPB))
         self.hman.fill("nS1sAS2",len(S1sAS2))
         self.hman.fill("S2QvsM",s2q,len(S1sAS2))
+
+        S1sAS2Ch = [0]*len(self.chids)
+        for S1 in S1sAS2:
+            chIDs = list(S1.GetCatHitMap().GetChannels(0))# RecoSignal!
+            for ch in self.chids:
+                if ch in chIDs: S1sAS2Ch[self.chids.index(ch)] += 1
+        for  ch in range(self.npmt):
+            self.hman.fill("nS1sAS2Ch%i"%ch,S1sAS2Ch[ch])
+
+        S1sPBCh = [0]*len(self.chids)
+        for S1 in S1sPB:
+            chIDs = list(S1.GetCatHitMap().GetChannels(0))# RecoSignal!
+            for ch in self.chids:
+                if ch in chIDs: S1sPBCh[self.chids.index(ch)] += 1
+        for  ch in range(self.npmt):
+            self.hman.fill("nS1sPBCh%i"%ch,S1sPBCh[ch])
         
         return True
-
+    
     def finalize(self):
 
         
@@ -95,6 +122,7 @@ class S2GrassAna(AAlgo):
         
         return
 
+    
     def computeRates(self):
 
         rowindow = self.btime - self.s2EGTmin
@@ -104,6 +132,10 @@ class S2GrassAna(AAlgo):
         nS1s = sum([b*c for b,c in zip(bins,conts)])        
         s1rate, s1erate = nS1s/totaltime, sqrt(nS1s)/totaltime 
 
+        self.hman.graph("S1AS2Rate",[self.time],[s1rate],0,[s1erate])
+        self.hman.axis("S1AS2Rate_graphAxis","Time",
+                       "S1 e- grass rate (ms^{-1})")
+        
         self.m.log(1,"S2 e- grass rate: %0.2f +/- %0.2f ms-1"
                    %(s1rate,s1erate))
 
@@ -114,23 +146,73 @@ class S2GrassAna(AAlgo):
         nS1s = sum([b*c for b,c in zip(bins,conts)])        
         s1rate, s1erate = nS1s/totaltime, sqrt(nS1s)/totaltime 
 
+        self.hman.graph("S1PBRate",[self.time],[s1rate],0,[s1erate])
+        self.hman.axis("S1PBRate_graphAxis","Time","S1 e- grass rate (ms^{-1})")
+        
         self.m.log(1,"Const e- grass rate: %0.2f +/- %0.2f ms-1"
                    %(s1rate,s1erate))
+
+        chs1rates,chs1erates = [],[]
+        pbchs1rates,pbchs1erates = [],[]
+        for ch in range(self.npmt):
+            
+            conts = self.hman.getContents("nS1sAS2Ch%i"%ch)
+            bins =  self.hman.getLowEdges("nS1sAS2Ch%i"%ch)
+            nS1s = sum([b*c for b,c in zip(bins,conts)])
+            s1chrate,s1cherate  = nS1s/totaltime, sqrt(nS1s)/totaltime
+            chs1rates.append(s1chrate)
+            chs1erates.append(s1cherate)
+            x, y = self.pos[ch].x(), self.pos[ch].y()
+            self.hman.fill("S1AS2XYRate",x,y,w=s1chrate)
+
+            conts = self.hman.getContents("nS1sPBCh%i"%ch)
+            bins =  self.hman.getLowEdges("nS1sPBCh%i"%ch)
+            nS1s = sum([b*c for b,c in zip(bins,conts)])
+            s1chrate,s1cherate  = nS1s/totaltime, sqrt(nS1s)/totaltime
+            pbchs1rates.append(s1chrate)
+            pbchs1erates.append(s1cherate)
+            x, y = self.pos[ch].x(), self.pos[ch].y()
+            self.hman.fill("S1PBXYRate",x,y,w=s1chrate)
+                      
+        self.hman.graph("S1AS2ChRate",self.chids,chs1rates,0,chs1erates)
+        self.hman.axis("S1AS2ChRate_graphAxis",
+                       "PMT","S1 e- grass rate (ms^{-1})")
+        self.hman.graph("S1PBChRate",self.chids,pbchs1rates,0,pbchs1erates)
+        self.hman.axis("S1PBChRate_graphAxis",
+                       "PMT","S1 e- grass rate (ms^{-1})")
         
+
         return
 
     def drawHistos(self):
 
         self.hman.style1d()
+        self.hman.style2d()
         self.hman.statsPanel(111111)
         self.hman.draw("S2sTime","black","yellow")
         self.wait()
         self.hman.draw("S2Charge","black","yellow")
         self.wait()
+        self.hman.draw("S1sTime","black","yellow")
+        self.wait()
         self.hman.draw("nS1sAS2","black","yellow")
         self.hman.draw("nS1sPB","black","","same",lineType=2)
         self.wait()
         self.hman.draw("S2QvsM",option="col")
+        self.wait()
+        self.hman.drawGraph("S1PBRate","AP",markerType=20)
+        self.wait()
+        self.hman.drawGraph("S1AS2Rate","AP",markerType=20)
+        self.wait()
+        self.hman.drawGraph("S1AS2ChRate","AP",markerType=20)
+        self.wait()
+        self.hman.statsPanel(0)
+        self.hman.draw("S1AS2XYRate",option="colz")
+        self.wait()
+        self.hman.drawGraph("S1PBChRate","AP",markerType=20)
+        self.wait()
+        self.hman.statsPanel(0)
+        self.hman.draw("S1PBXYRate",option="colz")
         self.wait()
         
         return 
@@ -141,6 +223,10 @@ class S2GrassAna(AAlgo):
         self.hman.h1("nS1sPB",labels,1000,0,1000)
         labels = "S1-like signals afer S2; Number of signals; Entries"
         self.hman.h1("nS1sAS2",labels,1000,0,1000)
+
+        labels = "S1 Start Time; S1 Start Time (#mus);Entries"
+        self.hman.h1("S1sTime",labels,
+                     int(self.btime/microsecond),0,self.btime/microsecond)
         
         labels = "S2 Start Time; S2 Start Time (#mus);Entries"
         self.hman.h1("S2sTime",labels,
@@ -149,6 +235,21 @@ class S2GrassAna(AAlgo):
         self.hman.h1("S2Charge",labels,200,0,self.hS2QMax)
 
         labels = "S2 Q vs EG Mult;S2 Charge (PE); e^{-} grass multiplicity"
-        self.hman.h2("S2QvsM",labels,200,0,self.hS2QMax,100,0,100)
+        self.hman.h2("S2QvsM",labels,200,0,self.hS2QMax,200,0,2000)
+
+        for ch in range(self.npmt):
+            hname = "nS1sAS2Ch%i"%ch
+            title = "AS2 S1-like signals Ch%i; Number of signals; Entries"%ch
+            self.hman.h1(hname,title,10000,0,10000)
+            hname = "nS1sPBCh%i"%ch
+            title = "PB S1-like signals Ch%i; Number of signals; Entries"%ch
+            self.hman.h1(hname,title,10000,0,10000)
+            
+        hname = "S1PBXYRate"
+        self.hman.h2(hname,"S1 e- grass rate; x (cm); y (cm); Rate (ms^{-1})",
+                     10,-200,200,10,-200,200)
+        hname = "S1AS2XYRate"
+        self.hman.h2(hname,"S1 e- grass rate; x (cm); y (cm); Rate (ms^{-1})",
+                     10,-200,200,10,-200,200)
         
         return 

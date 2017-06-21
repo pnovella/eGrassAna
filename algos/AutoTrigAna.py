@@ -64,7 +64,7 @@ class AutoTrigAna(AAlgo):
         self.hman.fill("nS1trig",len(S1s))
         self.hman.fill("nS2trig",len(S2s))
         
-        S1sCh = S2sCh = [0]*len(self.chids)
+        S1sCh = [0]*len(self.chids)
         for S1 in S1s:
             chIDs = list(S1.GetCatHitMap().GetChannels(0))# RecoSignal!
             for ch in self.chids:
