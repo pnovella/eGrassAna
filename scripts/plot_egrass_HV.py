@@ -6,7 +6,7 @@ import time
 hman = HistoManager(True)
 
 #runs = [4212,4213,4218,4219,4220,4221,4222,4223,4224]
-runs = [4015,4016,4020]#,4212,4224] 
+runs = [4015,4016,4020,4213] 
 for run in runs: hman.load("../data/AutoTrigAna_%i.root"%run,"%i_"%run)
 
 
@@ -30,6 +30,7 @@ hman.setGrid(1,1)
 hman.drawGraph("myrate","AP",markerType=20,min=30,max=60)
 hman.addText(4015.5,52,"HV On",color="red",size=0.03,rotate=0)
 hman.addText(4019,38,"Gate HV Off",color="blue",size=0.03,rotate=0)
+hman.addText(4150,38,"Gate/Cathode HV Off",color="blue",size=0.03,rotate=0)
 
 raw_input()
 
