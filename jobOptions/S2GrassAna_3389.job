@@ -71,4 +71,4 @@ TriggerSelector MIN_N_S2 I 1
 CNTJob FLOG I 0
 CNTJob FLOG S S2GrassAna.log
 #---------- histogram file ----------#
-CNTJob FHISTOS S S2GrassAna.root
+CNTJob FHISTOS S S2GrassAna_3389.root

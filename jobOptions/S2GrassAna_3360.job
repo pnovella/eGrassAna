@@ -7,7 +7,7 @@ CNTJob PATHS SV 2
 
 #--------- DATA -------#
 CNTJob INPUT_DATA SV 1
-../../../DATA/egrass/dst.gdcnext.*_3389_RS_noS1MultCut.root
+../../../DATA/egrass/dst.gdcnext.*_3360_RS_noS1MultCut.root
 
 
 #--------- DATA READER -------#
@@ -34,9 +34,10 @@ S2GrassAna
 
 #--------- SignalSelector params -------#
 
+SignalSelector HISTO_TMAX D 3200 microsecond
 SignalSelector HISTO_S1_QMAX D 100
 SignalSelector HISTO_S2_QMAX D 20000
-SignalSelector DRAW I 0
+SignalSelector DRAW I 1
 SignalSelector RECO_LABEL S RecoSignal
 
 SignalSelector S1_MIN_ST D 0 microsecond
@@ -48,8 +49,8 @@ SignalSelector S1_MAX_Q D 100000
 SignalSelector S1_MIN_PM I 0
 SignalSelector S1_MAX_PM I 12
 
-SignalSelector S2_MIN_ST D 640 microsecond
-SignalSelector S2_MAX_ST D 660 microsecond
+SignalSelector S2_MIN_ST D 992 microsecond
+SignalSelector S2_MAX_ST D 1003 microsecond
 SignalSelector S2_MIN_W D 1.0 microsecond
 SignalSelector S2_MAX_W D 25.0 microsecond
 SignalSelector S2_MIN_Q D 500
@@ -64,11 +65,19 @@ TriggerSelector RECO_LABEL S RecoSignal
 
 TriggerSelector MAX_N_S1 I 1000
 TriggerSelector MIN_N_S1 I 1
-TriggerSelector MAX_N_S2 I 1
+TriggerSelector MAX_N_S2 I 3
 TriggerSelector MIN_N_S2 I 1
+
+#--------- S2GrassAna params -------#
+
+S2GrassAna DRAW I 1
+S2GrassAna HISTO_S2_Q_MAX D 100000
+S2GrassAna BUFFER_TIME D 3200 microsecond
+S2GrassAna MAX_N_S2 I 3
+S2GrassAna S2_GRASS_TIME_MIN D 1400 microsecond
 
 #------------- log file -------------#
 CNTJob FLOG I 0
 CNTJob FLOG S S2GrassAna.log
 #---------- histogram file ----------#
-CNTJob FHISTOS S S2GrassAna.root
+CNTJob FHISTOS S S2GrassAna_3360.root
