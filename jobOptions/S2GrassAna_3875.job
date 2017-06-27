@@ -76,6 +76,7 @@ S2GrassAna HISTO_S2_Q_MAX D 100000
 S2GrassAna BUFFER_TIME D 3200 microsecond
 S2GrassAna MAX_N_S2 I 4
 S2GrassAna S2_GRASS_TIME_MIN D 1400 microsecond
+S2GrassAna S2_GRASS_TIME_MAX D 3200 microsecond
 
 #------------- log file -------------#
 CNTJob FLOG I 0

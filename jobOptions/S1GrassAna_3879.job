@@ -7,7 +7,7 @@ CNTJob PATHS SV 2
 
 #--------- DATA -------#
 CNTJob INPUT_DATA SV 1
-../../../DATA/egrass/gatedst_withwaveforms_NEW_3879_*_RS.root
+../../../DATA/egrass/dst_3879_RS_AlphaGrass.root
 
 
 #--------- DATA READER -------#
@@ -20,17 +20,21 @@ CNTJob WRITER S gateWriter
 CNTJob SAVE I 0
 
 #---------- NUMBER OF EVENTS TO ANALYZE ----------#
-CNTJob NEVENTS I -100
+CNTJob NEVENTS I   -100
 CNTJob NDEBUG I 100
 
 #---------- FIRST EVENS TO ANALYZE ----------#
 CNTJob FEVENT I 0
 
 #--------- ALGORITHMS -------#
-CNTJob ALGOS SV 3
-SignalSelector
-TriggerSelector
-S2GrassAna
+
+CNTJob ALGOS SV 1
+S1GrassAna
+
+#CNTJob ALGOS SV 3
+#SignalSelector
+#TriggerSelector
+#S1GrassAna
 
 #--------- SignalSelector params -------#
 
@@ -61,7 +65,7 @@ SignalSelector S2_MAX_PM I 12
 
 #--------- TriggerSelector params -------#
 
-TriggerSelector DRAW I 1
+TriggerSelector DRAW I 0
 TriggerSelector RECO_LABEL S RecoSignal
 
 TriggerSelector MAX_N_S1 I 100000
@@ -69,17 +73,28 @@ TriggerSelector MIN_N_S1 I 1
 TriggerSelector MAX_N_S2 I 4
 TriggerSelector MIN_N_S2 I 1
 
-#--------- S2GrassAna params -------#
+#--------- S1GrassAna params -------#
 
-S2GrassAna DRAW I 1
-S2GrassAna HISTO_S2_Q_MAX D 100000
-S2GrassAna BUFFER_TIME D 3200 microsecond
-S2GrassAna MAX_N_S2 I 4
-S2GrassAna S2_GRASS_TIME_MIN D 1400 microsecond
-S2GrassAna S2_GRASS_TIME_MAX D 3200 microsecond
+S1GrassAna DRAW I 1
+S1GrassAna HISTO_S2_Q_MAX D 100000
+S1GrassAna BUFFER_TIME D 3200 microsecond
+S1GrassAna MAX_N_S2 I 4
+
+S1GrassAna S1_GRASS_TIME_WINDOW D 6 microsecond
+
+# cathode alphas
+#S1GrassAna S1_GRASS_TIME_MAX D 900 microsecond
+#S1GrassAna S1_ALPHA_TIME_MIN D 650 microsecond
+#S1GrassAna S1_ALPHA_TIME_MAX D 655 microsecond
+
+# Bulk alphas
+S1GrassAna S1_GRASS_TIME_MAX D 1170 microsecond
+S1GrassAna S1_ALPHA_TIME_MIN D 670 microsecond
+S1GrassAna S1_ALPHA_TIME_MAX D 970 microsecond
+
 
 #------------- log file -------------#
 CNTJob FLOG I 0
-CNTJob FLOG S S2GrassAna.log
+CNTJob FLOG S S1GrassAna.log
 #---------- histogram file ----------#
-CNTJob FHISTOS S S2GrassAna_3879.root
+CNTJob FHISTOS S S1GrassAna_3879_test.root

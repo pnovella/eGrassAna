@@ -7,7 +7,7 @@ CNTJob PATHS SV 2
 
 #--------- DATA -------#
 CNTJob INPUT_DATA SV 1
-../../../DATA/egrass/gatedst_withwaveforms_NEW_3879_*_RS.root
+../../../DATA/egrass/dst_new_Run3828_*.root
 
 
 #--------- DATA READER -------#
@@ -20,7 +20,7 @@ CNTJob WRITER S gateWriter
 CNTJob SAVE I 0
 
 #---------- NUMBER OF EVENTS TO ANALYZE ----------#
-CNTJob NEVENTS I -100
+CNTJob NEVENTS I 1000
 CNTJob NDEBUG I 100
 
 #---------- FIRST EVENS TO ANALYZE ----------#
@@ -34,29 +34,29 @@ S2GrassAna
 
 #--------- SignalSelector params -------#
 
+SignalSelector HISTO_TMAX D 2000 microsecond
+SignalSelector HISTO_S1_QMAX D 100
+SignalSelector HISTO_S2_QMAX D 400000
+SignalSelector HISTO_S2_WMAX D 2000 microsecond
 SignalSelector DRAW I 1
 SignalSelector RECO_LABEL S RecoSignal
-
-SignalSelector HISTO_S1_QMAX D 500
-SignalSelector HISTO_S2_QMAX D 100000
-SignalSelector HISTO_TMAX D 3200 microsecond
 
 SignalSelector S1_MIN_ST D 0 microsecond
 SignalSelector S1_MAX_ST D 3200 microsecond
 SignalSelector S1_MIN_W D 0 microsecond
 SignalSelector S1_MAX_W D 1.0 microsecond
 SignalSelector S1_MIN_Q D 0
-SignalSelector S1_MAX_Q D 1e9
-SignalSelector S1_MIN_PM I -1
+SignalSelector S1_MAX_Q D 100000
+SignalSelector S1_MIN_PM I 0
 SignalSelector S1_MAX_PM I 12
 
-SignalSelector S2_MIN_ST D 1192 microsecond
-SignalSelector S2_MAX_ST D 1205 microsecond
-SignalSelector S2_MIN_W D 3.5 microsecond
-SignalSelector S2_MAX_W D 25.0 microsecond
-SignalSelector S2_MIN_Q D 1000
-SignalSelector S2_MAX_Q D 1e9
-SignalSelector S2_MIN_PM I -1
+SignalSelector S2_MIN_ST D 994 microsecond
+SignalSelector S2_MAX_ST D 1002 microsecond
+SignalSelector S2_MIN_W D 5.0 microsecond
+SignalSelector S2_MAX_W D 500.0 microsecond
+SignalSelector S2_MIN_Q D 4000
+SignalSelector S2_MAX_Q D 4000000
+SignalSelector S2_MIN_PM I 10
 SignalSelector S2_MAX_PM I 12
 
 #--------- TriggerSelector params -------#
@@ -64,22 +64,21 @@ SignalSelector S2_MAX_PM I 12
 TriggerSelector DRAW I 1
 TriggerSelector RECO_LABEL S RecoSignal
 
-TriggerSelector MAX_N_S1 I 100000
+TriggerSelector MAX_N_S1 I 1000
 TriggerSelector MIN_N_S1 I 1
-TriggerSelector MAX_N_S2 I 4
+TriggerSelector MAX_N_S2 I 1
 TriggerSelector MIN_N_S2 I 1
 
 #--------- S2GrassAna params -------#
 
 S2GrassAna DRAW I 1
-S2GrassAna HISTO_S2_Q_MAX D 100000
-S2GrassAna BUFFER_TIME D 3200 microsecond
-S2GrassAna MAX_N_S2 I 4
-S2GrassAna S2_GRASS_TIME_MIN D 1400 microsecond
-S2GrassAna S2_GRASS_TIME_MAX D 3200 microsecond
+S2GrassAna HISTO_S2_Q_MAX D 400000
+S2GrassAna BUFFER_TIME D 2000 microsecond
+S2GrassAna MAX_N_S2 I 3
+S2GrassAna S2_GRASS_TIME_MIN D 1150 microsecond
 
 #------------- log file -------------#
 CNTJob FLOG I 0
 CNTJob FLOG S S2GrassAna.log
 #---------- histogram file ----------#
-CNTJob FHISTOS S S2GrassAna_3879.root
+CNTJob FHISTOS S S2GrassAna_3828.root

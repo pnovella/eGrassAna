@@ -7,7 +7,7 @@ CNTJob PATHS SV 1
 
 #--------- DATA -------#
 CNTJob INPUT_DATA SV 1
-/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4348_*.root
+/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4364_*.root
 
 #--------- DATA READER -------#
 CNTJob READER S gateReader
@@ -33,4 +33,4 @@ AutoTrigAna
 CNTJob FLOG I 0
 CNTJob FLOG S eGrassAna.log
 #---------- histogram file ----------#
-CNTJob FHISTOS S AutoTrigAna_4348.root
+CNTJob FHISTOS S AutoTrigAna_4364.root
