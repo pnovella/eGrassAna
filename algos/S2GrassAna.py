@@ -25,6 +25,8 @@ class S2GrassAna(AAlgo):
 
         try: self.s2EGTmin = self.doubles["S2_GRASS_TIME_MIN"]
         except KeyError: self.s2EGTmin = 700*microsecond
+        try: self.s2EGTmax = self.doubles["S2_GRASS_TIME_MAX"]
+        except KeyError: self.s2EGTmax = 1200*microsecond
         # S2-induced EG measured in region afer S2
         
         try: self.cntEGTmax = self.doubles["CNT_GRASS_TIME_MAX"]
@@ -86,7 +88,8 @@ class S2GrassAna(AAlgo):
         self.hman.fill("S2sTime",s2time/microsecond)
         for s1 in S1s: self.hman.fill("S1sTime",s1.GetStartTime()/microsecond)
         
-        S1sAS2 =[s1 for s1 in S1s if s1.GetStartTime()>self.s2EGTmin]
+        S1sAS2 =[s1 for s1 in S1s \
+                 if self.s2EGTmin<s1.GetStartTime()<self.s2EGTmax]
         S1sPB =[s1 for s1 in S1s if s1.GetStartTime()<self.cntEGTmax]
 
         self.hman.fill("nS1sPB",len(S1sPB))
@@ -125,7 +128,7 @@ class S2GrassAna(AAlgo):
     
     def computeRates(self):
 
-        rowindow = self.btime - self.s2EGTmin
+        rowindow = self.s2EGTmax - self.s2EGTmin
         totaltime = rowindow*(self.nAnaTrig)/millisecond
         conts = self.hman.getContents("nS1sAS2")
         bins =  self.hman.getLowEdges("nS1sAS2")
