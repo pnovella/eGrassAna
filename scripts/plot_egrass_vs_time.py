@@ -5,7 +5,9 @@ import time
 
 hman = HistoManager(True)
 
-runs = [4057,4063,4075,4115,4126,4170,4194,4210,4265,4282,4308,4333,4345,4348] 
+runs = [4057,4063,4075,4115,4126,4170,4194,4210,4265,4282,4308,
+        4333,4345,4348,4357,4364]
+
 for run in runs: hman.load("../data/AutoTrigAna_%i.root"%run,"%i_"%run)
 
 times,rates,erates = [],[],[]
