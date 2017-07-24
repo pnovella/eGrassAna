@@ -1,5 +1,3 @@
-
-
 #--------- PATHS with modules to be used -------#
 CNTJob PATHS SV 2
 /home/pnovella/Physics/NEXT/sw/eGrassAna/algos
@@ -7,7 +5,7 @@ CNTJob PATHS SV 2
 
 #--------- DATA -------#
 CNTJob INPUT_DATA SV 1
-../../../DATA/egrass/dst_3879_RS_AlphaGrass.root
+../../../DATA/egrass/dst_4366_RS_AlphaGrass.root
 
 
 #--------- DATA READER -------#
@@ -20,21 +18,17 @@ CNTJob WRITER S gateWriter
 CNTJob SAVE I 0
 
 #---------- NUMBER OF EVENTS TO ANALYZE ----------#
-CNTJob NEVENTS I   -100
+CNTJob NEVENTS I 100
 CNTJob NDEBUG I 100
 
 #---------- FIRST EVENS TO ANALYZE ----------#
 CNTJob FEVENT I 0
 
 #--------- ALGORITHMS -------#
-
-CNTJob ALGOS SV 1
-S1GrassAna
-
-#CNTJob ALGOS SV 3
-#SignalSelector
-#TriggerSelector
-#S1GrassAna
+CNTJob ALGOS SV 3
+SignalSelector
+TriggerSelector
+S2GrassAna
 
 #--------- SignalSelector params -------#
 
@@ -43,10 +37,10 @@ SignalSelector RECO_LABEL S RecoSignal
 
 SignalSelector HISTO_S1_QMAX D 500
 SignalSelector HISTO_S2_QMAX D 100000
-SignalSelector HISTO_TMAX D 3200 microsecond
+SignalSelector HISTO_TMAX D 1200 microsecond
 
 SignalSelector S1_MIN_ST D 0 microsecond
-SignalSelector S1_MAX_ST D 3200 microsecond
+SignalSelector S1_MAX_ST D 1200 microsecond
 SignalSelector S1_MIN_W D 0 microsecond
 SignalSelector S1_MAX_W D 1.0 microsecond
 SignalSelector S1_MIN_Q D 0
@@ -54,8 +48,8 @@ SignalSelector S1_MAX_Q D 1e9
 SignalSelector S1_MIN_PM I -1
 SignalSelector S1_MAX_PM I 12
 
-SignalSelector S2_MIN_ST D 1192 microsecond
-SignalSelector S2_MAX_ST D 1205 microsecond
+SignalSelector S2_MIN_ST D 0 microsecond
+SignalSelector S2_MAX_ST D 800 microsecond
 SignalSelector S2_MIN_W D 3.5 microsecond
 SignalSelector S2_MAX_W D 25.0 microsecond
 SignalSelector S2_MIN_Q D 1000
@@ -65,7 +59,7 @@ SignalSelector S2_MAX_PM I 12
 
 #--------- TriggerSelector params -------#
 
-TriggerSelector DRAW I 0
+TriggerSelector DRAW I 1
 TriggerSelector RECO_LABEL S RecoSignal
 
 TriggerSelector MAX_N_S1 I 100000
@@ -73,28 +67,17 @@ TriggerSelector MIN_N_S1 I 1
 TriggerSelector MAX_N_S2 I 4
 TriggerSelector MIN_N_S2 I 1
 
-#--------- S1GrassAna params -------#
+#--------- S2GrassAna params -------#
 
-S1GrassAna DRAW I 1
-S1GrassAna HISTO_S2_Q_MAX D 100000
-S1GrassAna BUFFER_TIME D 3200 microsecond
-S1GrassAna MAX_N_S2 I 4
-
-S1GrassAna S1_GRASS_TIME_WINDOW D 400 microsecond
-
-# cathode alphas
-#S1GrassAna S1_GRASS_TIME_MAX D 900 microsecond
-#S1GrassAna S1_ALPHA_TIME_MIN D 650 microsecond
-#S1GrassAna S1_ALPHA_TIME_MAX D 655 microsecond
-
-# Bulk alphas
-S1GrassAna S1_GRASS_TIME_MAX D 1170 microsecond
-S1GrassAna S1_ALPHA_TIME_MIN D 670 microsecond
-S1GrassAna S1_ALPHA_TIME_MAX D 770 microsecond
-
+S2GrassAna DRAW I 1
+S2GrassAna HISTO_S2_Q_MAX D 100000
+S2GrassAna BUFFER_TIME D 800 microsecond
+S2GrassAna MAX_N_S2 I 4
+S2GrassAna CNT_GRASS_TIME_MAX D 50 microsecond
+S2GrassAna S2_GRASS_TIME_MIN D 600 microsecond
 
 #------------- log file -------------#
 CNTJob FLOG I 0
-CNTJob FLOG S S1GrassAna.log
+CNTJob FLOG S S2GrassAna.log
 #---------- histogram file ----------#
-CNTJob FHISTOS S S1GrassAna_3879_test.root
+CNTJob FHISTOS S S2GrassAna_4366.root

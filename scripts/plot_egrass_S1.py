@@ -14,6 +14,11 @@ HVs = [15,22,24]
 runs = [3875,3879,4356]
 for run in runs: hman.load("../data/S1GrassAna_%i.root"%run,"%i_"%run)
 
+hman.style1d()
+hman.draw("3879_S1sTime","black","yellow")
+
+raw_input()
+
 rates,erates = [],[]
 pbrates,pberates = [],[]
 for run in runs:
@@ -84,13 +89,22 @@ HVs = [15,22]
 runs = [3875,3879]
 for run in runs: hman.load("../data/S1GrassAna_%i_BulkAlphas.root"%run,
                            "%i_B_"%run)
+
+
+hman.addLegend("3879_B_aS1DT","Cathode HV = 22 kV (3879)","LF",
+               x0=0.5,y0=0.7,x1=0.933,y1=0.9,tsize=0.03)
+hman.addLegendEntry("3875_B_aS1DT","Cathode HV = 15 kV (3879)","LF")
+
 hman.draw("3879_B_aS1DT","black","yellow",norm=1)
-#hman.draw("3879_B_aS1DT","blue","","same",lineType=2,norm=1)
-hman.draw("3875_B_aS1DT","red","","same",lineType=3,norm=1)
+hman.draw("3875_B_aS1DT","black","","same",lineType=3,norm=1)
 raw_input()
 
-#------- prove 4mus structure does not depend on HV
 
+#------- prove 4mus structure does not depend on cathode HV
+
+hman.cclear()
+runs = [3875,3879]
+HVs = [15,22]
 for run in runs: hman.load("../data/S1GrassAna_%i_Bulk_DTMax6.root"%run,
                            "%i_BDT6_"%run)
 
@@ -114,7 +128,15 @@ hman.setGrid(1,1)
 hman.drawGraph("BDT6AS1Rate","AP",markerType=20,lineType=1)
 raw_input()
 
-    
+#------- prove 4mus structure does not depend on gate HV
+
+hman.load("../data/S1GrassAna_4371_Bulk_DTMax6.root","4371_BDT6_")
+hman.style1d()
+hman.draw("3879_BDT6_aS1DT","black","yellow",norm=1)
+hman.draw("4371_BDT6_aS1DT","red","","same",lineType=3,norm=1)
+raw_input()
+# TO DO!!! COmpare consecutive run with s1-trigger!!!!!!
+
 #------- prove no grass for bulk alphas
 
 runs,HVs = [3875,3879],[15,22]

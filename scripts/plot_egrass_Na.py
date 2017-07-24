@@ -18,6 +18,7 @@ for run in runs:
     erates.append(erate)
     
 hman.graph("Rate",runs,rates,0,erates)
+hman.setTitle("Rate","")
 hman.setTitle("Rate_graphAxis","Auto-trigger Runs")
 hman.axis("Rate_graphAxis","Run Number","e^{-} grass rate (ms^{-1})")
 hman.style1d()
@@ -35,15 +36,25 @@ hman.addText(4242,250,"HV On",color="blue",size=0.02,rotate=-90)
 hman.addText(4239,650,"Na axial port w/o shielding",color="red",size=0.025)
 hman.addText(4250,60,"Na axial port w/ shielding",color="red",size=0.025)
 
+hman.ps("bg_grass_na.eps")
+
 raw_input()
-hman.addLegend("4237_S1ChRate","Run 4237 No Na","P",
+hman.addLegend("4237_S1ChRate","No Na source","P",
                x0=0.45,y0=0.35,x1=0.933,y1=0.5,tsize=0.03)
-hman.addLegendEntry("4238_S1ChRate","Run 4238 Na w/o shielding","P")
+hman.addLegendEntry("4238_S1ChRate","Na source w/o shielding","P")
 hman.setGrid(1,1)
-hman.drawGraph("4237_S1ChRate","AP",markerType=24,max=300)
+
+hman.setTitle("4237_S1ChRate_graphAxis","")
+hman.axis("4237_S1ChRate_graphAxis","PMT Channel","e^{-} grass rate (ms^{-1})")
+hman.style1d("4237_S1ChRate_graphAxis")
+hman.draw("4237_S1ChRate_graphAxis",max=300)
+hman.drawGraph("4237_S1ChRate","P",markerType=24,max=300)
 hman.drawGraph("4238_S1ChRate","P",markerType=20)
 hman.addText(17,120,"Central PMTs",color="red",size=0.025)
 #hman.ps("egrass_rate_autotrigger_ch.eps")
+
+hman.ps("bg_grass_na_ch.eps")
+
 raw_input()
 
 

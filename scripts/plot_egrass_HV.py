@@ -25,12 +25,15 @@ for run in runs:
 hman.graph("myrate",runs,rates,0,erates)
 hman.axis("myrate_graphAxis","Run Number","e^{-} grass rate (ms^{-1})")
 hman.setTitle("myrate_graphAxis","Auto-trigger Runs")
+hman.setTitle("myrate","")
 hman.style1d()
 hman.setGrid(1,1)
 hman.drawGraph("myrate","AP",markerType=20,min=30,max=60)
 hman.addText(4015.5,52,"HV On",color="red",size=0.03,rotate=0)
 hman.addText(4019,38,"Gate HV Off",color="blue",size=0.03,rotate=0)
 hman.addText(4150,38,"Gate/Cathode HV Off",color="blue",size=0.03,rotate=0)
+
+hman.ps("bg_grass_hv.eps")
 
 raw_input()
 

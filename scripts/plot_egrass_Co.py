@@ -23,6 +23,7 @@ hman.axis("myrate_graphAxis","Run Number","e^{-} grass rate (ms^{-1})")
 hman.setTitle("myrate_graphAxis","Auto-trigger Runs")
 hman.style1d()
 hman.setGrid(1,1)
+hman.setTitle("myrate","")
 hman.drawGraph("myrate","APL",markerType=20,min=0,max=300)
 hman.drawLine(4009,0,4009,300,lineType=2,lineColor="blue")
 hman.addText(4008,180,"Vacuum in PMT volume",color="blue",size=0.02,rotate=90)
@@ -32,16 +33,24 @@ hman.addText(4011,130,"^{56}Co in lateral port",color="red",size=0.02)
 hman.addText(4013,260,"^{56}Co in axial port",color="red",size=0.02)
 hman.addText(4019,20,"Gate HV Off",color="blue",size=0.02)
 
+hman.ps("bg_grass_co.eps")
+
 raw_input()
 
-hman.addLegend("4012_S1ChRate","Run 4012 No Co","P",
+hman.addLegend("4012_S1ChRate","No Co source","P",
                x0=0.5,y0=0.8,x1=0.933,y1=0.9,tsize=0.03)
-hman.addLegendEntry("4013_S1ChRate","Run 4013 Co in axial","P")
+hman.addLegendEntry("4013_S1ChRate","Co in axial port","P")
 hman.setGrid(1,1)
-hman.drawGraph("4013_S1ChRate","AP",markerType=20,max=60,min=0)
+hman.setTitle("4013_S1ChRate","")
+hman.axis("4013_S1ChRate_graphAxis","PMT Channel","e^{-} grass rate (ms^{-1})")
+hman.style1d()
+hman.draw("4013_S1ChRate_graphAxis",max=60,min=0,title=0)
+hman.drawGraph("4013_S1ChRate","P",markerType=20)
 hman.drawGraph("4012_S1ChRate","P",markerType=24)
 hman.addText(17,35,"Central PMTs",color="red",size=0.025)
-#hman.ps("egrass_rate_autotrigger_ch.eps")
+
+hman.ps("bg_grass_co_ch.eps")
+
 raw_input()
 
 runrates,runerates = [],[]   

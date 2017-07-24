@@ -21,10 +21,14 @@ hman.setTitle("myrate_graphAxis","Auto-trigger Runs")
 #hman["myrate_graphAxis"].GetXaxis().SetTimeDisplay(1);
 hman.style1d()
 hman.setGrid(1,1)
+hman.setTitle("myrate","")
 hman.drawGraph("myrate","APL",lineType=2,markerType=20)
 hman.addText(4466.1,45,"SiPM On, HHV On",color="blue",size=0.03)
 hman.addText(4467.1,25,"SiPM Off, HHV On",color="blue",size=0.03)
 hman.addText(4467.5,13,"SiPM Off, HHV Off",color="blue",size=0.03)
+
+hman.ps("bg_grass_sipm.eps")
+
 raw_input()
 
 hman.addLegend("4466_S1ChRate","SiPM On, HHV On (4366)","P",

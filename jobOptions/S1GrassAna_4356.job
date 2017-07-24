@@ -80,21 +80,23 @@ S1GrassAna HISTO_S2_Q_MAX D 100000
 S1GrassAna BUFFER_TIME D 1200 microsecond
 S1GrassAna MAX_N_S2 I 4
 
-#S1GrassAna S1_GRASS_TIME_WINDOW D 6 microsecond
+S1GrassAna S1_GRASS_TIME_WINDOW D 400 microsecond
+
+#S1GrassAna S1_ALPHA_CHARGE_MIN D 900
 
 # cathode alphas
 #S1GrassAna S1_GRASS_TIME_MAX D 600 microsecond
 #S1GrassAna S1_ALPHA_TIME_MIN D 100 microsecond
 #S1GrassAna S1_ALPHA_TIME_MAX D 110 microsecond
 
-# Bulk alphas
+# Bulk alpha
 S1GrassAna S1_GRASS_TIME_MAX D 600 microsecond
-S1GrassAna S1_ALPHA_TIME_MIN D 220 microsecond
-S1GrassAna S1_ALPHA_TIME_MAX D 320 microsecond
+S1GrassAna S1_ALPHA_TIME_MIN D 120 microsecond
+S1GrassAna S1_ALPHA_TIME_MAX D 200 microsecond
 
 
 #------------- log file -------------#
 CNTJob FLOG I 0
 CNTJob FLOG S S1GrassAna.log
 #---------- histogram file ----------#
-CNTJob FHISTOS S S1GrassAna_4356_BulkAlphas.root
+CNTJob FHISTOS S S1GrassAna_4356_test.root

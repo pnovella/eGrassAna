@@ -24,7 +24,11 @@ hman.graph("myrate",[-0.5]+times,[0]+rates,0,[0]+erates)
 hman.axis("myrate_graphAxis","Time (min)","e^{-} grass rate (ms^{-1})")
 hman.setTitle("myrate_graphAxis","Auto-trigger Runs")
 hman.style1d()
+hman.setGrid(1,1)
+hman.setTitle("myrate","")
 hman.drawGraph("myrate","AP",markerType=20,min=30,max=40)
+
+hman.ps("bg_grass_time.eps")
 
 raw_input()
 
