@@ -91,31 +91,7 @@ hman.style1d()
 hman.drawGraph("AS1Width","APL",markerType=20,lineType=2)
 raw_input()
 
-#------------------------------------------------------#
-#-------------------- Prompt S1 Grass -----------------#
-#------------------------------------------------------#
 
-hman.addLegend("4366_aS1DT","HV = 23.8/2.8 kV (4366)","LF",
-               x0=0.5,y0=0.7,x1=0.933,y1=0.9,tsize=0.03)
-hman.addLegendEntry("4371_aS1DT","HV = 23.8/0 kV (4376)","LF")
-
-# show prmpt gras strucutre is there event when no gate HV
-hman.style1d()
-hman.setGrid(1,1)
-hman.draw("4366_aS1DT","black","yellow",norm=0)
-hman.draw("4371_aS1DT","black","","same",lineType=2,norm=0)
-raw_input()
-
-hman.cclear()
-hman.load("../data/S1GrassAna_4371_DTMax6.root","4371_DT6_")
-hman.load("../data/S1GrassAna_4371_DTMin10.root","4371_DT10_")
-hman.addLegend("4371_DT6_aS1EGQ","#DeltaT < 6 #mus (4371)","LF",
-               x0=0.5,y0=0.7,x1=0.933,y1=0.9,tsize=0.03)
-hman.addLegendEntry("4371_DT10_aS1EGQ","#DeltaT > 10 #mus (4371)","LF")
-hman.setLogy(True)
-hman.draw("4371_DT6_aS1EGQ","black","yellow",norm=1)
-hman.draw("4371_DT10_aS1EGQ","black","","same",lineType=2,norm=1)
-raw_input()
 
 
 #------------------------------------------------------#

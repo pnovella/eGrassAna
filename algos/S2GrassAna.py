@@ -95,7 +95,7 @@ class S2GrassAna(AAlgo):
         self.hman.fill("nS1sPB",len(S1sPB))
         self.hman.fill("nS1sAS2",len(S1sAS2))
         self.hman.fill("S2QvsM",s2q,len(S1sAS2))
-
+        
         S1sAS2Ch = [0]*len(self.chids)
         for S1 in S1sAS2:
             chIDs = list(S1.GetCatHitMap().GetChannels(0))# RecoSignal!
@@ -103,7 +103,7 @@ class S2GrassAna(AAlgo):
                 if ch in chIDs: S1sAS2Ch[self.chids.index(ch)] += 1
         for  ch in range(self.npmt):
             self.hman.fill("nS1sAS2Ch%i"%ch,S1sAS2Ch[ch])
-
+            
         S1sPBCh = [0]*len(self.chids)
         for S1 in S1sPB:
             chIDs = list(S1.GetCatHitMap().GetChannels(0))# RecoSignal!

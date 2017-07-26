@@ -48,6 +48,10 @@ class S1GrassAna(AAlgo):
         try: self.aS1Qmin = self.doubles["S1_ALPHA_CHARGE_MIN"]
         except KeyError: self.aS1Qmin = 100
         # minimum charge for alpha S1
+
+        try: self.aS1Qmax = self.doubles["S1_ALPHA_CHARGE_MAX"]
+        except KeyError: self.aS1Qmax = 1e9
+        # minimum charge for alpha S1
         
         try: self.aS1Tmin = self.doubles["S1_ALPHA_TIME_MIN"]
         except KeyError: self.aS1Tmin = 650*microsecond
@@ -95,21 +99,30 @@ class S1GrassAna(AAlgo):
         if len(S2s)>self.maxS2:
             self.m.fatalError("event should have %i S2s at most"%self.maxS2)
             # this is in case alpha S2 is splitted into >1 pulses
-            
-        s2q = sum([s.GetAmplitude() for s in S2s])
-        s2time = S2s[0].GetStartTime()
-        
-        self.hman.fill("S2Charge",s2q)
-        self.hman.fill("S2sTime",s2time/microsecond)
+
+
         for s1 in S1s: self.hman.fill("S1sTime",s1.GetStartTime()/microsecond)
 
         # need to selected events with cathode alphas
         S1sTQ = [(s.GetStartTime(),s.GetAmplitude()) for s in S1s]
         aS1 = S1sTQ.pop(S1sTQ.index(max(S1sTQ,key = lambda x: x[1])))
         
-        if aS1[1]<self.aS1Qmin or \
+        if aS1[1]<self.aS1Qmin  or aS1[1]>self.aS1Qmax or\
            aS1[0]<self.aS1Tmin or aS1[0]>self.aS1Tmax:
             return False # no good alpha
+
+
+        s2q = 0
+        if len(S2s):
+            s2q = sum([s.GetAmplitude() for s in S2s])
+            s2time = S2s[0].GetStartTime()
+            self.hman.fill("S2Charge",s2q)
+            self.hman.fill("S2sTime",s2time/microsecond)
+        
+        ##
+        #saS1 = S1sTQ.pop(S1sTQ.index(max(S1sTQ,key = lambda x: x[1])))
+        #if saS1[1]>self.aS1Qmin: return # 2 alpha s1 !!!!!
+        ###
         
         self.nAnaTrig += 1
 
@@ -122,16 +135,38 @@ class S1GrassAna(AAlgo):
         S1sPB =[s1 for s1 in S1s if s1.GetStartTime()<self.cntEGTmax \
                 and s1.GetAmplitude() < self.s1EGQmax]
 
+        lt = 0
         for s1 in S1sAS1:
             self.hman.fill("aS1DT",(s1.GetStartTime()-aS1[0])/microsecond)
             self.hman.fill("aS1EGQ",s1.GetAmplitude())
+            self.hman.fill("aS1EGT",s1.GetStartTime()/microsecond)
             self.hman.fill("aS1EGW",
                            (s1.GetEndTime()-s1.GetStartTime())/microsecond)
+            if lt:
+                st = s1.GetStartTime()
+                dt = (st-lt)/microsecond
+                if aS1[0]+10*microsecond<st<aS1[0]+120*microsecond:
+                    self.hman.fill("S1S1DTBuffer",dt)
+                elif aS1[0]+130*microsecond<st<aS1[0]+500*microsecond:
+                    self.hman.fill("S1S1DTActive",dt)
+                elif st>aS1[0]+600*microsecond:
+                    self.hman.fill("S1S1DTOut",dt)
+            lt=s1.GetStartTime()
 
+        #----
+        if s2q: # tere is an alpha S2
+            S1sAS2 =[s1 for s1 in S1sAS1 \
+                     if s1.GetStartTime()>s2time  \
+                     and s1.GetAmplitude() < self.s1EGQmax]
+            for s1 in S1sAS2:
+                self.hman.fill("aS2DT",(s1.GetStartTime()-s2time)/microsecond)
+        #---- 
+        
+        
         self.hman.fill("nS1sPB",len(S1sPB))
         self.hman.fill("nS1sAS1",len(S1sAS1))
-        self.hman.fill("S2QvsM",s2q,len(S1sAS1))
         self.hman.fill("S1QvsM",aS1[1],len(S1sAS1))
+        if len(S2s): self.hman.fill("S2QvsM",s2q,len(S1sAS1))
         
         S1sAS1Ch = [0]*len(self.chids)
         for S1 in S1sAS1:
@@ -176,7 +211,7 @@ class S1GrassAna(AAlgo):
         self.hman.axis("S1AS1Rate_graphAxis","Time",
                        "S1 e- grass rate (ms^{-1})")
         
-        self.m.log(1,"S2 e- grass rate: %0.2f +/- %0.2f ms-1"
+        self.m.log(1,"S1 e- grass rate: %0.2f +/- %0.2f ms-1"
                    %(s1rate,s1erate))
 
         rowindow = self.cntEGTmax
@@ -239,10 +274,13 @@ class S1GrassAna(AAlgo):
         self.wait()
         self.hman.draw("aS1Charge","black","yellow")
         self.wait()
+        self.hman.setGrid(1,1)
         self.hman.draw("aS1DT","black","yellow")
         self.wait()
         self.hman.draw("aS1EGQ","black","yellow")
         self.wait()
+        self.hman.draw("aS1EGT","black","yellow")
+        self.wait()          
         self.hman.draw("aS1EGW","black","yellow")
         self.wait()    
         self.hman.draw("nS1sAS1","black","yellow")
@@ -266,7 +304,15 @@ class S1GrassAna(AAlgo):
         self.hman.statsPanel(0)
         self.hman.draw("S1PBXYRate",option="colz")
         self.wait()
-        
+        self.hman.draw("S1S1DTBuffer","black","yellow")
+        self.wait()
+        self.hman.draw("S1S1DTActive","black","yellow")
+        self.wait()
+        self.hman.draw("S1S1DTOut","black","yellow")
+        self.wait()
+        self.hman.setGrid(1,1)
+        self.hman.draw("aS2DT","black","yellow")
+        self.wait()
         return 
     
     def bookHistos(self):
@@ -293,7 +339,10 @@ class S1GrassAna(AAlgo):
                      0,self.s1EGWindow/microsecond)
 
         labels = "Alpha S1 Grass Charge; S1 Charge (PE);Entries"
-        self.hman.h1("aS1EGQ",labels,200,0,5)
+        self.hman.h1("aS1EGQ",labels,800,0,20)
+        labels = "Alpha S1 Grass Time; S1 Start Time (#mus);Entries"
+        self.hman.h1("aS1EGT",labels,
+                     int(self.btime/microsecond),0,self.btime/microsecond)
         labels = "Alpha S1 Grass Width; S1 width (#mus);Entries"
         self.hman.h1("aS1EGW",labels,40,0,1)
                            
@@ -323,5 +372,15 @@ class S1GrassAna(AAlgo):
         hname = "S1AS1XYRate"
         self.hman.h2(hname,"S1 e- grass rate; x (cm); y (cm); Rate (ms^{-1})",
                      10,-200,200,10,-200,200)
+
+        self.hman.h1("S1S1DTBuffer","S1 e- grass #DeltaT;#DeltaT (#mus);A. U.",
+                     200,0,50)
+        self.hman.h1("S1S1DTActive","S1 e- grass #DeltaT;#DeltaT (#mus);A. U.",
+                     200,0,50)
+        self.hman.h1("S1S1DTOut","S1 e- grass #DeltaT;#DeltaT (#mus);A. U.",
+                     200,0,50)
+
+        labels = "Alpha S2 grass #DeltaT; #DeltaT_{S2-G} (#mus);Entries"
+        self.hman.h1("aS2DT",labels,800,0,800)
         
         return 

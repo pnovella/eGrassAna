@@ -43,14 +43,21 @@ class GrassChar(AAlgo):
         """
 
         signals = getGoodSignals(event,self.recoLabel)
+        
+        S2s = [s for s in signals if s.GetSignalType()==gate.S2]
+        for s2 in S2s:
+            self.hman.fill(self.alabel("S2_PMTMult"),s2.fetch_istore("PMTMult"))
+            self.hman.fill(self.alabel("S2_Amp"),s2.GetAmplitude())
+        if len(S2s): return False
+        
         S1s = [s for s in signals if s.GetSignalType()==gate.S1]
-
         sTs = sorted([s1.GetStartTime()/microsecond for s1 in S1s])
         dts = [ sTs[i+1]-sTs[i] for i in range(len(sTs)-1) ]
         
         for dt in dts: self.hman.fill(self.alabel("S1_DT"),dt)
         
         for s1 in S1s:
+            self.hman.fill(self.alabel("S1_PMTMult"),s1.fetch_istore("PMTMult"))
             q = s1.GetAmplitude()
             st, et = s1.GetStartTime(), s1.GetEndTime()
             self.hman.fill(self.alabel("S1_sT"),st/microsecond)
@@ -72,7 +79,15 @@ class GrassChar(AAlgo):
     def drawHistos(self):
 
         self.hman.style1d()
+        self.hman.statsPanel(111111)
+        self.hman.setLogy(True)
 
+        self.hman.draw(self.alabel("S2_PMTMult"),"black","yellow")
+        self.wait()
+        self.hman.draw(self.alabel("S2_Amp"),"black","yellow")
+        self.wait()
+        self.hman.draw(self.alabel("S1_PMTMult"),"black","yellow")
+        self.wait()
         self.hman.draw(self.alabel("S1_sT"),"black","yellow")
         self.wait()
         self.hman.draw(self.alabel("S1_eT"),"black","yellow")
@@ -105,5 +120,15 @@ class GrassChar(AAlgo):
         self.hman.h1(self.alabel("S1_DT"),
                      "S1-like Time difference; #DeltaT (#mus);A. U.",200,0,50)
 
+        self.hman.h1(self.alabel("S1_PMTMult"),
+                     "S1-like PMT Multiplicity; PMT Multiplicity;A. U.",
+                     12,0,12)
+
+        self.hman.h1(self.alabel("S2_PMTMult"),
+                     "S2-like PMT Multiplicity; PMT Multiplicity;A. U.",
+                     12,0,12)
+
+        self.hman.h1(self.alabel("S2_Amp"),
+                     "S2-like Amplitude;Charge (PE);A. U.",200,0,2000)
         
         return

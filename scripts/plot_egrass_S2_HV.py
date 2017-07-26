@@ -38,7 +38,10 @@ hman.axis("AS2Rate_graphAxis",
           "Cathode Voltage (kV)","S2 e^{-} grass rate (ms^{-1})")
 hman.style1d()
 hman.setGrid(1,1)
+hman.setTitle("AS2Rate","")
 hman.drawGraph("AS2Rate","APL",markerType=20,lineType=2,min=50,max=200)
+
+hman.ps("s2_grass_alpha_HV.eps")
 
 raw_input()
 
@@ -51,7 +54,37 @@ hman.setGrid(1,1)
 hman.drawGraph("PBRate","APL",markerType=20,lineType=2,min=10,max=400)
 raw_input()
 
-
+for run in runs:
+    rates,erates = [],[]
+    pbrates,pberates = [],[]
+    pmts=[]
+    for i in range(11):
+        pmt,pbrate = Double(),Double()
+        hman["%s_S1PBChRate"%run].GetPoint(i,pmt,pbrate)
+        pberate = hman["%s_S1PBChRate"%run].GetErrorY(0)
+        pbrates.append(pbrate)
+        pberates.append(pberate)
+        pmts.append(pmt)
+        
+        pmt,rate = Double(),Double()
+        hman["%s_S1AS2ChRate"%run].GetPoint(i,pmt,rate)
+        erate = hman["%s_S1AS2ChRate"%run].GetErrorY(0)
+        rates.append(rate-pbrate)
+        erates.append(sqrt(erate**2+pberate**2))
+        
+    hman.graph("%i_AS2ChRate"%run,pmts,rates,0,erates)
+    hman.setTitle("%i_AS2ChRate"%run,"")
+    hman.axis("%i_AS2ChRate_graphAxis"%run,
+              "Run Number","S2 e^{-} grass rate (ms^{-1})")
+    hman.style1d()
+    hman.drawGraph("%i_AS2ChRate"%run,"AP",markerType=20)
+    #hman.ps("s2_grass_%i_ch.eps"%run)
+    raw_input()
+    hman.subHistos("%i_S1AS2XYRate"%run,"%i_S1PBXYRate"%run,"%i_XYRate"%run)
+    hman.draw("%i_XYRate"%run,option="colz",title=0)
+    #hman.ps("s2_grass_%i_xy.eps"%run)
+    raw_input()
+    
 for run in runs:
     hman.drawGraph("%i_S1AS2ChRate"%run,"AP",markerType=20)
     raw_input()
