@@ -10,16 +10,71 @@ hman = HistoManager(True)
 alpha runs
 """
 
-runs = [4366,4439,4442,4443]
+hman.load("../data/S1GrassAna_4442.root","NoSIPM_")
+hman.load("../data/S1GrassAna_4439.root","SIPM_")
+hman.style1d()
+hman.draw("NoSIPM_aS1sTime","black","yellow")
+hman.draw("SIPM_aS1sTime","black","","same",lineType=2)
+raw_input()
+hman.draw("NoSIPM_aS1Charge","black","yellow")
+hman.draw("SIPM_aS1Charge","black","","same",lineType=2)
+raw_input()
+hman.draw("SIPM_S1sTime","black","yellow")
+hman.draw("NoSIPM_S1sTime","black","","same",lineType=2)
+raw_input()
 
-for run in runs+runs: hman.load("../data/S1GrassAna_%i.root"%run,"%i_"%run)
+
+# hman.load("../data/S1GrassAna_4442_S2allowed.root","NoSIPM_")
+# hman.load("../data/S1GrassAna_4442_S2notallowed.root","NoSIPM_Act_")
+# hman.load("../data/S1GrassAna_4439_S2allowed.root","SIPM_")
+# hman.load("../data/S1GrassAna_4439_S2notallowed.root","SIPM_Act_")
+# # S2 are actually cathode alphas with long trail of "after-pulses"
+# hman.style1d()
+
+# hman.statsPanel(111111)
+# hman.draw("NoSIPM_aS1sTime","black","yellow")
+# hman.draw("NoSIPM_Act_aS1sTime","black","","same",lineType=2)
+# raw_input()
+# hman.draw("NoSIPM_aS1Charge","black","yellow")
+# hman.draw("NoSIPM_Act_aS1Charge","black","","same",lineType=2)
+# raw_input()
+# hman.draw("NoSIPM_S2sTime","black","yellow")
+# raw_input()
+# hman.draw("NoSIPM_S2Charge","black","yellow")
+# raw_input()
+# hman.draw("NoSIPM_S1sTime","black","yellow")
+# hman.draw("NoSIPM_Act_S1sTime","black","","same",lineType=2)
+# raw_input()
+
+# hman.draw("SIPM_aS1sTime","black","yellow")
+# hman.draw("SIPM_Act_aS1sTime","black","","same",lineType=2)
+# raw_input()
+# hman.draw("SIPM_aS1Charge","black","yellow")
+# hman.draw("SIPM_Act_aS1Charge","black","","same",lineType=2)
+# raw_input()
+
+# hman.draw("SIPM_S1sTime","black","yellow")
+# hman.draw("SIPM_Act_S1sTime","black","","same",lineType=2)
+# raw_input()
+
+# hman.draw("NoSIPM_S1sTime","black","yellow")
+# hman.draw("SIPM_S1sTime","black","","same",lineType=2)
+# raw_input()
+# hman.draw("NoSIPM_Act_S1sTime","black","yellow")
+# hman.draw("SIPM_Act_S1sTime","black","","same",lineType=2)
+# raw_input()
+
+#--------------------------#
+
+runs = [4366,4439,4442,4443]
+for run in runs: hman.load("../data/S1GrassAna_%i.root"%run,"%i_"%run)
 hman.load("../data/S1GrassAna_4366_Cathode.root","4366_Cath_")
 hman.load("../data/S1GrassAna_4443_Cathode.root","4443_Cath_")
 
 hman.addLegend("4439_aS1DT","HV Off. SiPM On (4439)","LF",
                x0=0.5,y0=0.7,x1=0.933,y1=0.9,tsize=0.03)
 hman.addLegendEntry("4442_aS1DT","HV Off. SiPM Off (4442)","LF")
-#hman.addLegendEntry("4443_aS1DT","HV On, SiPM Off (4443)","LF")
+hman.addLegendEntry("4443_aS1DT","HV On, SiPM Off (4443)","LF")
 
 hman.style1d()
 hman.setGrid(1,1)
