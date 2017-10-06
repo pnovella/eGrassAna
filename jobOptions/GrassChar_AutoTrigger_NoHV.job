@@ -6,14 +6,14 @@ CNTJob PATHS SV 1
 /home/pnovella/Physics/NEXT/sw/eGrassAna/algos
 
 #--------- DATA -------#
-CNTJob INPUT_DATA SV 1
+CNTJob INPUT_DATA SV 7
 /home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4213_*.root
-#/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4218_*.root
-#/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4219_*.root
-#/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4220_*.root
-#/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4221_*.root
-#/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4222_*.root
-#/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4223_*.root
+/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4218_*.root
+/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4219_*.root
+/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4220_*.root
+/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4221_*.root
+/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4222_*.root
+/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4223_*.root
 
 #--------- DATA READER -------#
 CNTJob READER S gateReader
@@ -25,7 +25,7 @@ CNTJob WRITER S gateWriter
 CNTJob SAVE I 0
 
 #---------- NUMBER OF EVENTS TO ANALYZE ----------#
-CNTJob NEVENTS I 500
+CNTJob NEVENTS I -500
 CNTJob NDEBUG I 100
 
 #---------- FIRST EVENS TO ANALYZE ----------#
@@ -39,4 +39,4 @@ GrassChar
 CNTJob FLOG I 0
 CNTJob FLOG S eGrassAna.log
 #---------- histogram file ----------#
-CNTJob FHISTOS S GrassChar_AutoTigger_NoHV.root
+CNTJob FHISTOS S GrassChar_AutoTigger_NoHV_AllRuns.root

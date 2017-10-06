@@ -26,7 +26,8 @@ class S2GrassAna(AAlgo):
         try: self.s2EGTmin = self.doubles["S2_GRASS_TIME_MIN"]
         except KeyError: self.s2EGTmin = 700*microsecond
         try: self.s2EGTmax = self.doubles["S2_GRASS_TIME_MAX"]
-        except KeyError: self.s2EGTmax = 1200*microsecond
+        except KeyError: self.s2EGTmax = self.btime
+        #1200*microsecond
         # S2-induced EG measured in region afer S2
         
         try: self.cntEGTmax = self.doubles["CNT_GRASS_TIME_MAX"]
@@ -80,14 +81,17 @@ class S2GrassAna(AAlgo):
         if len(S2s)>self.maxS2:
             self.m.fatalError("event should have %i S2s at most"%self.maxS2)
       
-        s2q = sum([s.GetAmplitude() for s in S2s])
+        s2q = sum([s.GetAmplitude() for s in S2s])# assume splitted signal
         s2time = S2s[0].GetStartTime()
         assert s2time < self.s2EGTmin # algo assumes S2 triggers
 
         self.hman.fill("S2Charge",s2q)
         self.hman.fill("S2sTime",s2time/microsecond)
-        for s1 in S1s: self.hman.fill("S1sTime",s1.GetStartTime()/microsecond)
-        
+        for s1 in S1s:
+            self.hman.fill("S1sTime",s1.GetStartTime()/microsecond)
+            dt = (s1.GetStartTime()-s2time)/microsecond
+            if dt>0: self.hman.fill("S1DT",dt)
+            
         S1sAS2 =[s1 for s1 in S1s \
                  if self.s2EGTmin<s1.GetStartTime()<self.s2EGTmax]
         S1sPB =[s1 for s1 in S1s if s1.GetStartTime()<self.cntEGTmax]
@@ -198,6 +202,8 @@ class S2GrassAna(AAlgo):
         self.wait()
         self.hman.draw("S1sTime","black","yellow")
         self.wait()
+        self.hman.draw("S1DT","black","yellow")
+        self.wait()
         self.hman.draw("nS1sAS2","black","yellow")
         self.hman.draw("nS1sPB","black","","same",lineType=2)
         self.wait()
@@ -230,6 +236,10 @@ class S2GrassAna(AAlgo):
         labels = "S1 Start Time; S1 Start Time (#mus);Entries"
         self.hman.h1("S1sTime",labels,
                      int(self.btime/microsecond),0,self.btime/microsecond)
+
+        labels = "Grass time distribution; #DeltaT_{S2-G} (#mus);Entries"
+        DT = self.s2EGTmax-self.s2EGTmin
+        self.hman.h1("S1DT",labels,int(DT/microsecond),0,DT/microsecond)
         
         labels = "S2 Start Time; S2 Start Time (#mus);Entries"
         self.hman.h1("S2sTime",labels,

@@ -85,7 +85,7 @@ S1GrassAna MAX_N_S2 I 4
 
 S1GrassAna S1_GRASS_TIME_MAX D 800 microsecond
 
-# cathode alphas
+# no cathode alphas
 #S1GrassAna S1_ALPHA_CHARGE_MIN D 900
 
 S1GrassAna S1_GRASS_TIME_WINDOW D 200 microsecond

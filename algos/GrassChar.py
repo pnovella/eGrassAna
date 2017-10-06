@@ -42,12 +42,16 @@ class GrassChar(AAlgo):
         """
         """
 
+        
         signals = getGoodSignals(event,self.recoLabel)
         
         S2s = [s for s in signals if s.GetSignalType()==gate.S2]
         for s2 in S2s:
             self.hman.fill(self.alabel("S2_PMTMult"),s2.fetch_istore("PMTMult"))
             self.hman.fill(self.alabel("S2_Amp"),s2.GetAmplitude())
+            st, et = s2.GetStartTime(), s2.GetEndTime()
+            self.hman.fill(self.alabel("S2_wT"),(et-st)/microsecond)
+
         if len(S2s): return False
         
         S1s = [s for s in signals if s.GetSignalType()==gate.S1]
@@ -80,11 +84,13 @@ class GrassChar(AAlgo):
 
         self.hman.style1d()
         self.hman.statsPanel(111111)
-        self.hman.setLogy(True)
+        #self.hman.setLogy(True)
 
         self.hman.draw(self.alabel("S2_PMTMult"),"black","yellow")
         self.wait()
         self.hman.draw(self.alabel("S2_Amp"),"black","yellow")
+        self.wait()
+        self.hman.draw(self.alabel("S2_wT"),"black","yellow")
         self.wait()
         self.hman.draw(self.alabel("S1_PMTMult"),"black","yellow")
         self.wait()
@@ -118,7 +124,7 @@ class GrassChar(AAlgo):
                      "S1-like Amplitude;Charge (PE);A. U.",200,0,self.hS1Qmax)
 
         self.hman.h1(self.alabel("S1_DT"),
-                     "S1-like Time difference; #DeltaT (#mus);A. U.",200,0,50)
+                     "S1-like Time difference; #DeltaT (#mus);A. U.",100,0,100)
 
         self.hman.h1(self.alabel("S1_PMTMult"),
                      "S1-like PMT Multiplicity; PMT Multiplicity;A. U.",
@@ -129,6 +135,9 @@ class GrassChar(AAlgo):
                      12,0,12)
 
         self.hman.h1(self.alabel("S2_Amp"),
-                     "S2-like Amplitude;Charge (PE);A. U.",200,0,2000)
+                     "S2-like Amplitude;Charge (PE);A. U.",2000,0,2000)
+
+        self.hman.h1(self.alabel("S2_wT"),
+                     "S2-like Signal Width;Width (#mus); A. U.",480,0,12)
         
         return

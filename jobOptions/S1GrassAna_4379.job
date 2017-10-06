@@ -7,7 +7,7 @@ CNTJob PATHS SV 2
 
 #--------- DATA -------#
 CNTJob INPUT_DATA SV 1
-../../../DATA/egrass/dst_4379_RS_AlphaGrass.root
+/home/pnovella/Physics/NEXT/DATA/egrass/dst_4379_RS_AlphaGrass.root
 #/home/pnovella/Physics/NEXT/DATA/egrass/dst_new_Run4379_*.root
 
 
@@ -35,7 +35,7 @@ CNTJob FEVENT I 0
 CNTJob ALGOS SV 1
 S1GrassAna
 
-#CNTJob ALGOS SV 2
+#CNTJob ALGOS SV 3
 #SignalSelector
 #TriggerSelector
 #S1GrassAna
@@ -52,7 +52,7 @@ SignalSelector HISTO_TMAX D 800 microsecond
 SignalSelector S1_MIN_ST D 0 microsecond
 SignalSelector S1_MAX_ST D 800 microsecond
 SignalSelector S1_MIN_W D 0 microsecond
-SignalSelector S1_MAX_W D 1.0 microsecond
+SignalSelector S1_MAX_W D 1.5 microsecond
 SignalSelector S1_MIN_Q D 0
 SignalSelector S1_MAX_Q D 1e9
 SignalSelector S1_MIN_PM I -1
@@ -60,8 +60,8 @@ SignalSelector S1_MAX_PM I 12
 
 SignalSelector S2_MIN_ST D 0 microsecond
 SignalSelector S2_MAX_ST D 800 microsecond
-SignalSelector S2_MIN_W D 3.5 microsecond
-SignalSelector S2_MAX_W D 25.0 microsecond
+SignalSelector S2_MIN_W D 1.5 microsecond
+SignalSelector S2_MAX_W D 30.0 microsecond
 SignalSelector S2_MIN_Q D 1000
 SignalSelector S2_MAX_Q D 1e9
 SignalSelector S2_MIN_PM I -1
@@ -69,12 +69,12 @@ SignalSelector S2_MAX_PM I 12
 
 #--------- TriggerSelector params -------#
 
-TriggerSelector DRAW I 0
+TriggerSelector DRAW I 1
 TriggerSelector RECO_LABEL S RecoSignal
 
-TriggerSelector MAX_N_S1 I 100000
+TriggerSelector MAX_N_S1 I 1000000
 TriggerSelector MIN_N_S1 I 1
-TriggerSelector MAX_N_S2 I 4
+TriggerSelector MAX_N_S2 I 1000000
 TriggerSelector MIN_N_S2 I 0
 
 #--------- S1GrassAna params -------#
@@ -82,22 +82,31 @@ TriggerSelector MIN_N_S2 I 0
 S1GrassAna DRAW I 1
 S1GrassAna HISTO_S2_Q_MAX D 100000
 S1GrassAna BUFFER_TIME D 800 microsecond
-S1GrassAna MAX_N_S2 I 4
+S1GrassAna MAX_N_S2 I 10000
 
 S1GrassAna S1_GRASS_TIME_WINDOW D 800 microsecond
 
-#cathode alphas
-#S1GrassAna S1_ALPHA_CHARGE_MIN D 900
+S1GrassAna S1_ALPHA_CHARGE_MIN D 400
 
-#
-#S1GrassAna S1_ALPHA_CHARGE_MAX D 300
+# active volume alphas
+S1GrassAna S1_ALPHA_CHARGE_MIN D 400
+S1GrassAna S1_ALPHA_CHARGE_MAX D 1500
+
+# cathode alphas
+#S1GrassAna S1_ALPHA_CHARGE_MIN D 2500
+#S1GrassAna S1_ALPHA_CHARGE_MAX D 10000
 
 S1GrassAna S1_GRASS_TIME_MAX D 800 microsecond
+
 S1GrassAna S1_ALPHA_TIME_MIN D 90 microsecond
-S1GrassAna S1_ALPHA_TIME_MAX D 110 microsecond
+S1GrassAna S1_ALPHA_TIME_MAX D 102 microsecond
+
+#S1GrassAna S1_GRASS_TIME_WINDOW D 60 microsecond
+
+S1GrassAna NO_HV I 1
 
 #------------- log file -------------#
 CNTJob FLOG I 0
 CNTJob FLOG S S1GrassAna.log
 #---------- histogram file ----------#
-CNTJob FHISTOS S S1GrassAna_4379.root
+CNTJob FHISTOS S S1GrassAna_4379_active.root

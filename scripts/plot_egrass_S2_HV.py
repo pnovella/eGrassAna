@@ -98,4 +98,43 @@ for run in runs:
     hman.drawGraph("%i_S1PBXYRate"%run,option="colz")
     raw_input()
 
+#------------------- gate HV: S1 trigger ------------------#
 
+
+runs = [4475,4461,4462,4476]
+for run in runs:
+    hman.load("../data/S2GrassS1TrigAna_%i.root"%run,"%i_"%run)
+
+#hman.draw("4476_S1DT","black","yellow")
+#hman.draw("4462_S1DT","black","","",lineType=1)
+#hman.draw("4461_S1DT","black","","same",lineType=2)
+#hman.draw("4475_S1DT","black","","same",lineType=4)
+#raw_input()
+
+HVs = [2.3,2.5,2.7,2.8]
+ngs,engs = [],[]
+rs,ers = [],[]
+for run in runs:
+    ngs.append(hman["%i_GM"%run].GetMean())
+    engs.append(hman["%i_GM"%run].GetRMS())
+    rs.append(ngs[-1]/400*1000)
+    ers.append(engs[-1]/400*1000)
+    
+    
+hman.graph("NG",HVs,ngs,0,engs)
+hman.axis("NG_graphAxis","Gate HV (kV)","Number of grass signals / #alpha")
+hman.style1d()
+hman.setGrid(1,1)
+hman.setTitle("NG","")
+hman.drawGraph("NG","AP",markerType=20,min=0)
+hman.ps("s2_grass_mult_HV.eps")
+raw_input()
+
+hman.graph("GR",HVs,rs,0,ers)
+hman.axis("GR_graphAxis","Gate HV (kV)","S2 e^{-} grass rate (ms^{-1})")
+hman.style1d()
+hman.setGrid(1,1)
+hman.setTitle("GR","")
+hman.drawGraph("GR","AP",markerType=20,min=0)
+hman.ps("s2_grass_alpha_gate_HV.eps")
+raw_input()

@@ -15,7 +15,10 @@ class S1GrassAna(AAlgo):
         AAlgo.__init__(self,param,level,self.name,0,label,kargs)
 
         try: self.maxS2 = self.ints["MAX_N_S2"] 
-        except KeyError: self.maxS2 = 1
+        except KeyError: self.maxS2 = 1e9
+
+        try: self.minS2 = self.ints["MIN_N_S2"] 
+        except KeyError: self.minS2 = 0
         
         try: self.recoLabel = self.strings["RECO_LABEL"]
         except KeyError: self.recoLabel = "RecoSignal"
@@ -41,7 +44,7 @@ class S1GrassAna(AAlgo):
         except KeyError: self.cntEGTmax = 100*microsecond
         # constant EG measured in prebuffer region
 
-        try: self.s1EGQmax = self.doubles["EG_CHARGE_MIN"]
+        try: self.s1EGQmax = self.doubles["EG_CHARGE_MAX"]
         except KeyError:  self.s1EGQmax = 20
         # minimum charge defining grass pulses (1PE)
 
@@ -52,6 +55,14 @@ class S1GrassAna(AAlgo):
         try: self.aS1Qmax = self.doubles["S1_ALPHA_CHARGE_MAX"]
         except KeyError: self.aS1Qmax = 1e9
         # minimum charge for alpha S1
+
+        try: self.aS2Qmin = self.doubles["S2_ALPHA_CHARGE_MIN"]
+        except KeyError: self.aS2Qmin = 7000
+        # minimum charge for alpha S1
+
+        try: self.aS2Qmax = self.doubles["S2_ALPHA_CHARGE_MAX"]
+        except KeyError: self.aS2Qmax = 1e9
+        # minimum charge for alpha S1
         
         try: self.aS1Tmin = self.doubles["S1_ALPHA_TIME_MIN"]
         except KeyError: self.aS1Tmin = 650*microsecond
@@ -60,6 +71,17 @@ class S1GrassAna(AAlgo):
         try: self.aS1Tmax = self.doubles["S1_ALPHA_TIME_MAX"]
         except KeyError: self.aS1Tmax = 655*microsecond
         # maximum time for alpha S1
+
+        try: self.aS2Tmin = self.doubles["S2_ALPHA_TIME_MIN"]
+        except KeyError: self.aS2Tmin = 0*microsecond
+        # minimum time for alpha S1
+
+        try: self.aS2Tmax = self.doubles["S2_ALPHA_TIME_MAX"]
+        except KeyError: self.aS2Tmax = 2300*microsecond
+        # maximum time for alpha S1
+
+        try: self.noHV= self.ints["NO_HV"]
+        except KeyError: self.noHV = False
         
    
     def initialize(self):
@@ -94,24 +116,44 @@ class S1GrassAna(AAlgo):
         signals = getGoodSignals(event,self.recoLabel)
         S1s = [s for s in signals if s.GetSignalType()==gate.S1 and\
                s.GetStartTime()<self.s1EGTmax]
-        S2s = [s for s in signals if s.GetSignalType()==gate.S2]
-                
-        if len(S2s)>self.maxS2:
-            self.m.fatalError("event should have %i S2s at most"%self.maxS2)
-            # this is in case alpha S2 is splitted into >1 pulses
+        S2s = [s for s in signals if s.GetSignalType()==gate.S2 and\
+               s.GetAmplitude()>self.aS2Qmin ]
 
+        #!!!! TO BE REVIEWED: misidentified S2!!!
+        fS2s = [s for s in signals if s.GetSignalType()==gate.S2 and\
+               s.GetAmplitude()<self.aS2Qmin ]
+        S1s = S1s+fS2s
+        
+        if self.noHV:# all signals must be S1!!!
+            S1s = S1s+S2s
+            S2s=[]
+       
+
+        #if len(S2s)!=1: return False
+        #if S2s[0].GetStartTime()>520000: return False
+        #if len(S2s)>self.maxS2:
+        #    #self.m.fatalError("event should have %i S2s at most"%self.maxS2)
+        #    return False
+        #    # this is in case alpha S2 is splitted into >1 pulses
 
         for s1 in S1s: self.hman.fill("S1sTime",s1.GetStartTime()/microsecond)
 
-        # need to selected events with cathode alphas
-        S1sTQ = [(s.GetStartTime(),s.GetAmplitude()) for s in S1s]
-        aS1 = S1sTQ.pop(S1sTQ.index(max(S1sTQ,key = lambda x: x[1])))
         
+        S1sTQ = [(s.GetStartTime(),s.GetAmplitude()) for s in S1s]
+        if not len(S1sTQ): return False
+        aS1 = S1sTQ.pop(S1sTQ.index(max(S1sTQ,key = lambda x: x[1])))
         if aS1[1]<self.aS1Qmin  or aS1[1]>self.aS1Qmax or\
            aS1[0]<self.aS1Tmin or aS1[0]>self.aS1Tmax:
             return False # no good alpha
-
-
+        
+        S2sTQ = [(s.GetStartTime(),s.GetAmplitude()) for s in S2s]
+        if len(S2sTQ)<self.minS2 or len(S2sTQ)>self.maxS2: return False
+        if len(S2sTQ):
+            aS2 = S2sTQ.pop(S2sTQ.index(max(S2sTQ,key = lambda x: x[1])))
+            if aS2[1]<self.aS2Qmin  or aS2[1]>self.aS2Qmax or\
+               aS2[0]<self.aS2Tmin or aS2[0]>self.aS2Tmax:
+                return False # not good alpha
+            
         s2q = 0
         if len(S2s):
             s2q = sum([s.GetAmplitude() for s in S2s])
@@ -154,7 +196,7 @@ class S1GrassAna(AAlgo):
             lt=s1.GetStartTime()
 
         #----
-        if s2q: # tere is an alpha S2
+        if s2q: # there is an alpha S2
             S1sAS2 =[s1 for s1 in S1sAS1 \
                      if s1.GetStartTime()>s2time  \
                      and s1.GetAmplitude() < self.s1EGQmax]
@@ -304,11 +346,11 @@ class S1GrassAna(AAlgo):
         self.hman.statsPanel(0)
         self.hman.draw("S1PBXYRate",option="colz")
         self.wait()
-        self.hman.draw("S1S1DTBuffer","black","yellow")
-        self.wait()
-        self.hman.draw("S1S1DTActive","black","yellow")
-        self.wait()
-        self.hman.draw("S1S1DTOut","black","yellow")
+        self.hman.draw("S1S1DTBuffer","black","yellow",norm=1)
+        #self.wait()
+        self.hman.draw("S1S1DTActive","black","","same",lineType=2,norm=1)
+        #self.wait()
+        self.hman.draw("S1S1DTOut","black","","same",lineType=3,norm=1)
         self.wait()
         self.hman.setGrid(1,1)
         self.hman.draw("aS2DT","black","yellow")
@@ -330,7 +372,7 @@ class S1GrassAna(AAlgo):
         self.hman.h1("aS1sTime",labels,
                      int(self.btime/microsecond),0,self.btime/microsecond)
         labels = "Alpha S1 Charge; S1 Charge (PE);Entries"
-        self.hman.h1("aS1Charge",labels,300,0,3000)
+        self.hman.h1("aS1Charge",labels,300,0,6000)
 
 
         labels = "Alpha S1 grass #DeltaT; #DeltaT_{S1-G} (#mus);Entries"

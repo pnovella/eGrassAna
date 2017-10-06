@@ -82,7 +82,7 @@ for run in runs:
     hman.graph("%i_AS2ChRate"%run,pmts,rates,0,erates)
     hman.setTitle("%i_AS2ChRate"%run,"")
     hman.axis("%i_AS2ChRate_graphAxis"%run,
-              "Run Number","S2 e^{-} grass rate (ms^{-1})")
+              "PMT Number","S2 e^{-} grass rate (ms^{-1})")
     hman.style1d()
     hman.drawGraph("%i_AS2ChRate"%run,"AP",markerType=20)
     hman.ps("s2_grass_%i_ch.eps"%run)

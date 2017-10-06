@@ -98,16 +98,20 @@ for run in runs:
     hman.load("../data/S1GrassAna_%i_BulkAlphas.root"%run,"%i_B_"%run)
 hman.style1d()
 
-hman.axis("3879_B_aS1DT","#DeltaT_{S1-G}","A.U.")
-hman.style1d("3879_B_aS1DT")
+for run in runs:
+    nalpha = hman.integral("%i_B_aS1sTime"%run)
+    hman.scale("%i_B_aS1DT"%run,1./nalpha,"%i_B_aS1DTn"%run)
 
-hman.addLegend("3879_B_aS1DT","Cathode HV = 22 kV (3879)","LF",
+hman.axisRange("3879_B_aS1DTn",0,25,"x")
+hman.axis("3879_B_aS1DTn","#DeltaT_{S1-G}","Entries/#alpha")
+hman.style1d("3879_B_aS1DTn")
+
+hman.addLegend("3879_B_aS1DTn","HV = 22.0/2.8 kV (3879)","LF",
                x0=0.45,y0=0.7,x1=0.932,y1=0.9,tsize=0.03)
-hman.addLegendEntry("3875_B_aS1DT","Cathode HV = 15 kV (3875)","LF")
-
+hman.addLegendEntry("3875_B_aS1DTn","HV = 15.0/2.8 kV (3875)","LF")
 hman.setGrid(1,1)
-hman.draw("3879_B_aS1DT","black","yellow",norm=1,title=0)
-hman.draw("3875_B_aS1DT","black","","same",lineType=3,norm=1)
+hman.draw("3879_B_aS1DTn","black","yellow",title=0,min=0,max=1.4)
+hman.draw("3875_B_aS1DTn","black","","same",lineType=3)
 
 hman.ps("s1_grass_prompt_dt.eps")
 
@@ -121,7 +125,6 @@ runs = [3875,3879]
 HVs = [15,22]
 for run in runs: hman.load("../data/S1GrassAna_%i_Bulk_DTMax6.root"%run,
                            "%i_BDT6_"%run)
-
 rates,erates = [],[]
 for run in runs:
     time,pbrate = Double(),Double()
@@ -149,6 +152,7 @@ raw_input()
 
 hman.load("../data/S1GrassAna_4371_Bulk_DTMax6.root","4371_BDT6_")
 hman.style1d()
+
 hman.draw("3879_BDT6_aS1DT","black","yellow",norm=1)
 hman.draw("4371_BDT6_aS1DT","red","","same",lineType=3,norm=1)
 
@@ -158,23 +162,36 @@ raw_input()
 #------- prove 4mus structure does not depend on gate HV (S1-trigger runs)
 
 runs = [4366,4371]
-for run in runs: hman.load("../data/S1GrassAna_%i.root"%run,"%i_"%run)
+#for run in runs: hman.load("../data/S1GrassAna_%i.root"%run,"%i_"%run)
 
-hman.axisRange("4366_aS1DT",0,25,"x")
-hman.axisRange("4371_aS1DT",0,25,"x")
-hman.axis("4366_aS1DT","#DeltaT_{S1-G}","A.U.")
+hman.load("../data/S1GrassAna_4366.root","4366_")
+hman.load("../data/S1GrassAna_4371.root","4371_")
+
+
+#hman.draw("4371_aS1DT")
+#raw_input()
+
+for run in runs:
+    nalpha = hman.integral("%i_aS1sTime"%run)
+    hman.scale("%i_aS1DT"%run,1./nalpha,"%i_aS1DTn"%run)
+
+
+hman.axisRange("4366_aS1DTn",0,25,"x")
+hman.axisRange("4371_aS1DTn",0,25,"x")
+hman.axis("4366_aS1DTn","#DeltaT_{S1-G}","Entries / #alpha")
+hman.axis("4371_aS1DTn","#DeltaT_{S1-G}","Entries / #alpha")
 
 hman.style1d()
 
-hman.addLegend("4366_aS1DT","HV = 23.8/2.8 kV (4366)","LF",
+hman.addLegend("4371_aS1DTn","HV = 23.8/0.0 kV (4371)","LF",
                x0=0.5,y0=0.7,x1=0.933,y1=0.9,tsize=0.03)
-hman.addLegendEntry("4371_aS1DT","HV = 23.8/0 kV (4371)","LF")
+#hman.addLegendEntry("4371_aS1DTn","HV = 23.8/0.0 kV (4371)","LF")
 
 # show prmpt gras strucutre is there event when no gate HV
 hman.style1d()
 hman.setGrid(1,1)
-hman.draw("4366_aS1DT","black","yellow",norm=1,title=0)
-hman.draw("4371_aS1DT","black","","same",lineType=2,norm=1)
+#hman.draw("4366_aS1DTn","black","yellow",title=0)
+hman.draw("4371_aS1DTn","black","yellow","",lineType=1,title=0,min=0,max=1.4)
 
 hman.ps("s1_grass_prompt_ghv.eps")
 
@@ -184,7 +201,7 @@ raw_input()
 hman.cclear()
 hman.load("../data/S1GrassAna_4371_DTMax6.root","4371_DT6_")
 hman.load("../data/S1GrassAna_4371_DTMin10.root","4371_DT10_")
-hman.axis("4371_DT6_aS1EGQ","S1 Charge (PE)","A.U.")
+hman.axis("4371_DT6_aS1EGQ","Grass Charge (PE)","A.U.")
 hman.style1d("4371_DT6_aS1EGQ")
 hman.addLegend("4371_DT6_aS1EGQ","#DeltaT < 6 #mus (4371)","LF",
                x0=0.5,y0=0.7,x1=0.933,y1=0.9,tsize=0.03)

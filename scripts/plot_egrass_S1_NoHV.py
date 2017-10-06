@@ -52,10 +52,10 @@ hman.cclear()
 hname = "SIPM_aS1DT"
 #ofit=hman.fit(hname,"expo(0)+pol0(2)",fr,700,hname+"_fit")
 #ffunc = TF1("ffunc","[0]/pow(1+x/[1],2)+pol0(2)",30,400)
-ffunc = TF1("ffunc","[0]/pow(1+x/[1],2)",50,80)
+ffunc = TF1("ffunc","[0]/pow(1+x/[1],2)",50,200)
 #ffunc = TF1("ffunc","[0]*exp(-x/[1])+pol0(2)",30,400)
 ffunc.SetParameter(1,5)
-ofit=hman.fit(hname,"ffunc",30,60,hname+"_fit")
+ofit=hman.fit(hname,"ffunc",30,80,hname+"_fit")
 hman[hname+"_fit"].GetFunction("f").SetLineColor(kRed)
 hman.statsPanel(0)
 hman.fitPanel(1111)
@@ -168,15 +168,15 @@ hman.cclear()
 hman.setLogy(False)
 
 lts,elts,maxs = [],[],[]
-frs=[30,30,40,40,40]
+frs=[30,30,30,30,30]
 for i,fr in zip(range(1,6),frs):
     hname = "NoSIPM_E%i_aS1DT"%i
     #ofit=hman.fit(hname,"expo(0)+pol0(2)",fr,700,hname+"_fit")
     #ffunc = TF1("ffunc","[0]/pow(1+x/[1],2)+pol0(2)",30,400)
-    #ffunc = TF1("ffunc","[0]/pow(1+x/[1],2)",30,400)
-    ffunc = TF1("ffunc","[0]*exp(-x/[1])+pol0(2)",30,400)
+    ffunc = TF1("ffunc","[0]/pow(1+x/[1],2)",30,80)
+    #ffunc = TF1("ffunc","[0]*exp(-x/[1])+pol0(2)",30,400)
     ffunc.SetParameter(1,5)
-    ofit=hman.fit(hname,"ffunc",fr,200,hname+"_fit")
+    ofit=hman.fit(hname,"ffunc",fr,80,hname+"_fit")
     hman[hname+"_fit"].GetFunction("f").SetLineColor(kRed)
     hman.statsPanel(0)
     hman.fitPanel(1111)
@@ -236,27 +236,37 @@ raw_input()
 
 hman.load("../data/S1GrassAna_4379.root","2.8_")
 hman.load("../data/S1GrassAna_4378.root","7.8_")
+hman.load("../data/S1GrassAna_4371.root","23.8_")
+hman.load("../data/S1GrassAna_4371_cathode.root","23.8c_")
+hman.load("../data/S1GrassAna_4370.root","21.0_")
 
 nalpha = hman.integral("SIPM_aS1sTime")
 nalpha1 = hman.integral("2.8_aS1sTime")
 nalpha2 = hman.integral("7.8_aS1sTime")
-hman.scale("SIPM_aS1DT",1./nalpha1,"SIPM_aS1DTn")
+nalpha3 = hman.integral("23.8_aS1sTime")
+nalpha4 = hman.integral("21.0_aS1sTime")
+nalpha5 = hman.integral("23.8c_aS1sTime")
+hman.scale("SIPM_aS1DT",1./nalpha,"SIPM_aS1DTn")
 hman.scale("2.8_aS1DT",1./nalpha1,"2.8_aS1DTn")
 hman.scale("7.8_aS1DT",1./nalpha2,"7.8_aS1DTn")
+hman.scale("23.8_aS1DT",1./nalpha3,"23.8_aS1DTn")
+hman.scale("21.0_aS1DT",1./nalpha4,"21.0_aS1DTn")
+hman.scale("23.8c_aS1DT",1./nalpha5,"23.8c_aS1DTn")
 
 hman.style1d()
 
-hman.addLegend("SIPM_aS1sTime","HHV Off (4439)","LF",
-               x0=0.5,y0=0.7,x1=0.933,y1=0.9,tsize=0.03)
-hman.addLegendEntry("2.8_aS1sTime","HV=2.8/2.8 kV (4379)","LF")
-#hman.addLegendEntry("7.8_aS1sTime","HV=7.8/2.8 kV (4378)","LF")
+hman.addLegend("SIPM_aS1Charge","HHV Off (4439)","LF",
+               x0=0.5,y0=0.8,x1=0.933,y1=0.9,tsize=0.03)
+#hman.addLegendEntry("21.0_aS1Charge","HV=21.0/0 kV (4370)","LF")
+#hman.addLegendEntry("23.8_aS1Charge","HV=23.8/0 kV (4371)","LF")
+#hman.addLegendEntry("7.8_aS1Charge","HV=7.8/2.8 kV (4378)","LF")
 
-hman.draw("SIPM_aS1sTime","black","yellow","",lineType=1)
-hman.draw("2.8_aS1sTime","black","","same",lineType=2)
-hman.draw("7.8_aS1sTime","red","","same",lineType=3)
-raw_input()
+#hman.draw("SIPM_aS1sTime","black","yellow","",lineType=1)
+#hman.draw("2.8_aS1sTime","black","","same",lineType=2)
+#hman.draw("7.8_aS1sTime","red","","same",lineType=3)
+#raw_input()
 hman.draw("SIPM_aS1Charge","black","yellow",lineType=1,max=250)
-hman.draw("2.8_aS1Charge","black","","same",lineType=2)
+#hman.draw("23.8_aS1Charge","black","","same",lineType=2)
 #hman.draw("7.8_aS1Charge","red","","same",lineType=3)
 hman.ps("aS1Charge_NoHV.eps")
 
@@ -264,13 +274,44 @@ raw_input()
 hman.setLogy(True)
 
 hman.axis("SIPM_aS1DTn","#DeltaT_{S1-G} (#mus)","Entries/#alpha")
-hman.axisRange("SIPM_aS1DTn",0,325,"x")
-hman.style1d("SIPM_aS1DTn")
+hman.axis("23.8_aS1DTn","#DeltaT_{S1-G} (#mus)","Entries/#alpha")
+hman.axisRange("23.8_aS1DTn",0,700,"x")
+
+#hman.axisRange("SIPM_aS1DTn",0,325,"x")
+hman.style1d()
+
+hman.addLegend("SIPM_aS1DTn","HHV Off (4439)","LF",
+               x0=0.5,y0=0.8,x1=0.933,y1=0.9,tsize=0.03)
+#hman.addLegendEntry("21.0_aS1DTn","HV=21.0/0 kV (4370)","LF")
+#hman.addLegendEntry("23.8_aS1DTn","HV=23.8/0 kV (4371)","LF")
 
 hman.setGrid(1,1)
 hman.draw("SIPM_aS1DTn","black","yellow")
-hman.draw("2.8_aS1DTn","black","","same",lineType=2)
+#hman.draw("21.0_aS1DTn","black","","same",lineType=2)
+#hman.draw("23.8_aS1DTn","black","","same",lineType=3)
 #hman.draw("7.8_aS1DTn","red","","same",lineType=3)
 hman.ps("aS1DT_NoHV.eps")
 raw_input()
 
+hman.setLogy(False)
+hman.addLegend("23.8_aS1DTn","HV=23.8/0 Act+Buff (4371)","LF",
+               x0=0.5,y0=0.7,x1=0.933,y1=0.9,tsize=0.03)
+hman.addLegendEntry("23.8c_aS1DTn","HV=23.8/0 Cathode (4371)","LF")
+hman.draw("23.8_aS1DTn","black","yellow","",lineType=1,title=0)
+hman.draw("23.8c_aS1DTn","black","","same",lineType=2)
+hman.ps("aS1DT_NoGateHV.eps")
+raw_input()
+
+hman.axisRange("23.8_aS1DTn",200,700,"x")
+hman.style1d()
+hman.draw("23.8_aS1DTn","black","yellow","",max=0.35,lineType=1,title=0)
+hman.draw("23.8c_aS1DTn","black","","same",lineType=2)
+hman.ps("aS1DT_NoGateHV_zoom.eps")
+
+raw_input()
+
+#ffunc = TF1("ffunc","[0]*exp(-x/[1])",200,500)
+ffunc = TF1("ffunc","expo",200,500)
+hman.fit("23.8c_aS1DT","ffunc",300,500,"23.8c_aS1DT_fit")
+hman.draw("23.8c_aS1DT_fit","black","yellow","",lineType=1,title=0)
+raw_input()
