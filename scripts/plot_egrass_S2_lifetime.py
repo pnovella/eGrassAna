@@ -94,7 +94,7 @@ raw_input()
 
 runs = [4366,4367,4461,4462,4475,4476]
 for run in runs:
-    hman.load("../jobOptions/S2GrassS1TrigAna_%i.root"%run,"%i_"%run)
+    hman.load("../data/S2GrassS1TrigAna_%i.root"%run,"%i_"%run)
 
 
 

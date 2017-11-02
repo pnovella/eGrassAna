@@ -1,0 +1,78 @@
+
+
+#--------- PATHS with modules to be used -------#
+CNTJob PATHS SV 2
+/home/pnovella/Physics/NEXT/sw/eGrassAna/algos
+/home/pnovella/Physics/NEXT/sw/pygata/algos
+
+#--------- DATA -------#
+CNTJob INPUT_DATA SV 1
+../../../DATA/egrass/dst_new_Run4746_*.root
+
+
+#--------- DATA READER -------#
+CNTJob READER S gateReader
+
+#--------- DATA WRITER -------#
+CNTJob WRITER S gateWriter
+
+#------ SAVE EVENTS IN OUTPUT FILE ----------# 
+CNTJob SAVE I 0
+
+#---------- NUMBER OF EVENTS TO ANALYZE ----------#
+CNTJob NEVENTS I  -1000
+CNTJob NDEBUG I 100
+
+#---------- FIRST EVENS TO ANALYZE ----------#
+CNTJob FEVENT I 0
+
+#--------- ALGORITHMS -------#
+CNTJob ALGOS SV 3
+SignalSelector
+TriggerSelector
+S2GrassAna
+
+#--------- SignalSelector params -------#
+
+SignalSelector HISTO_S1_QMAX D 100
+SignalSelector HISTO_S2_QMAX D 20000
+SignalSelector HISTO_TMAX D 1300 microsecond
+SignalSelector DRAW I 1
+SignalSelector RECO_LABEL S RecoSignal
+
+SignalSelector S1_MIN_ST D 0 microsecond
+SignalSelector S1_MAX_ST D 3200 microsecond
+SignalSelector S1_MIN_W D 0 microsecond
+SignalSelector S1_MAX_W D 1.0 microsecond
+SignalSelector S1_MIN_Q D 0
+SignalSelector S1_MAX_Q D 100000
+SignalSelector S1_MIN_PM I 0
+SignalSelector S1_MAX_PM I 12
+
+SignalSelector S2_MIN_ST D 640 microsecond
+SignalSelector S2_MAX_ST D 655 microsecond
+SignalSelector S2_MIN_W D 1.0 microsecond
+SignalSelector S2_MAX_W D 25.0 microsecond
+SignalSelector S2_MIN_Q D 500
+SignalSelector S2_MAX_Q D 2000000
+SignalSelector S2_MIN_PM I 0
+SignalSelector S2_MAX_PM I 12
+
+#--------- TriggerSelector params -------#
+
+TriggerSelector DRAW I 0
+TriggerSelector RECO_LABEL S RecoSignal
+
+TriggerSelector MAX_N_S1 I 1000
+TriggerSelector MIN_N_S1 I 1
+TriggerSelector MAX_N_S2 I 1
+TriggerSelector MIN_N_S2 I 1
+
+#--------- S2GrassAna params -------#
+S2GrassAna BUFFER_TIME D 1350 microsecond
+
+#------------- log file -------------#
+CNTJob FLOG I 0
+CNTJob FLOG S S2GrassAna.log
+#---------- histogram file ----------#
+CNTJob FHISTOS S S2GrassAna_4746.root

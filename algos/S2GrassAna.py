@@ -26,7 +26,7 @@ class S2GrassAna(AAlgo):
         try: self.s2EGTmin = self.doubles["S2_GRASS_TIME_MIN"]
         except KeyError: self.s2EGTmin = 700*microsecond
         try: self.s2EGTmax = self.doubles["S2_GRASS_TIME_MAX"]
-        except KeyError: self.s2EGTmax = self.btime
+        except KeyError: self.s2EGTmax = 1200*microsecond
         #1200*microsecond
         # S2-induced EG measured in region afer S2
         
@@ -238,7 +238,7 @@ class S2GrassAna(AAlgo):
                      int(self.btime/microsecond),0,self.btime/microsecond)
 
         labels = "Grass time distribution; #DeltaT_{S2-G} (#mus);Entries"
-        DT = self.s2EGTmax-self.s2EGTmin
+        DT = self.btime-self.s2EGTmin
         self.hman.h1("S1DT",labels,int(DT/microsecond),0,DT/microsecond)
         
         labels = "S2 Start Time; S2 Start Time (#mus);Entries"
